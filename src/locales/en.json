@@ -1,0 +1,50 @@
+{
+  "option": {
+    "home": "Home",
+    "about": "About",
+    "categories": "Categories",
+    "tutorials": "Tutorials",
+    "users": "users"
+  },
+  "authoring-phrase": {
+    "intro": "Made with",
+    "use": "using",
+    "author": "by {brand} Development Team"
+  },
+  "about": {
+    "title": "About LabIoT",
+    "content": "LabIoT is a solution developed to digitize and automate laboratory processes through the Internet of Things (IoT).\nIts modular architecture connects sensors, devices, and users within a single platform, providing control, traceability, and real-time analytics.\nLabIoT aims to provide scientific and educational institutions with a modern tool that enhances operational efficiency, data security, and technological innovation in laboratory environments."
+  },
+  "home": {
+    "title": "Welcome to LabIoT",
+    "content": "LabIoT is an intelligent platform that integrates IoT technology for real-time monitoring and management of laboratories.\nIt allows you to record, visualize, and analyze sensor data such as temperature, humidity, and other critical parameters that influence experiment quality and material preservation.\nWith LabIoT, technical teams can optimize processes, improve traceability, and ensure stable laboratory conditions at all times."
+  },
+  "page-not-found": {
+    "title": "Page Not Found",
+    "content": "The path {unavailable-route} you are looking for does not exist.",
+    "go-home": "Go Home"
+  },
+
+  "tutorials": {
+    "title": "Tutorials",
+    "id": "ID",
+    "summary": "Summary",
+    "category-id": "Category ID",
+    "actions": "Actions",
+    "new": "New Tutorial",
+    "confirm-delete": "Are you sure you want to delete {title}?",
+    "delete-header": "Confirm Deletion"
+  },
+  "tutorial": {
+    "new-title": "Create New Tutorial",
+    "edit-title": "Edit Tutorial",
+    "title": "Title",
+    "summary": "Summary",
+    "category": "Category",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "occurred": "Errors occurred"
+  }
+}

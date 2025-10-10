@@ -4,7 +4,8 @@
     "about": "Acerca de",
     "categories": "Categorías",
     "tutorials": "Tutoriales",
-    "users": "Usuarios"
+    "users": "Usuarios",
+    "subscriptions": "Subscripciones"
   },
   "authoring-phrase": {
     "intro": "Hecho con",
@@ -46,5 +47,24 @@
   },
   "errors": {
     "occurred": "Ocurrieron errores"
+  },
+  "subscription": {
+    "listTitle": "Suscripciones",
+    "plan": "Plan",
+    "startDate": "Fecha de inicio",
+    "status": "Estado",
+    "statusActive": "Activa",
+    "statusCancelled": "Cancelada",
+    "statusExpired": "Expirada",
+    "trialDaysRemaining": "Días de prueba restantes: {{days}}",
+    "actions": {
+      "cancel": "Cancelar suscripción",
+      "startTrial": "Iniciar prueba"
+    }
+  },
+  "error": {
+    "cannotCancel": "No se puede cancelar la suscripción con estado {{status}}",
+    "cannotStartTrial": "Solo suscripciones activas pueden iniciar prueba",
+    "invalidPayment": "Método de pago inválido"
   }
 }

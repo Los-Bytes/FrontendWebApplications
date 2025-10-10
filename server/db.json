@@ -1,0 +1,86 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "userName": "user1",
+      "fullName": "Diego Soto",
+      "email": "djfnsjdnfjsdfs@gmail.com",
+      "phone": "65786767777777",
+      "role": "technician",
+      "organization": "Laboratorios Andes S.A.",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+    },
+    {
+      "id": 2,
+      "userName": "user2",
+      "fullName": "María López",
+      "email": "maria.lopez@example.com",
+      "phone": "999000002",
+      "role": "researcher",
+      "organization": "BioInnovate Perú SAC",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+    },
+    {
+      "id": 3,
+      "userName": "user3",
+      "fullName": "José Ramírez",
+      "email": "jose.ramirez@example.com",
+      "phone": "999000003",
+      "role": "technician",
+      "organization": "Servicios de Laboratorio del Sur EIRL",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+    },
+    {
+      "id": 4,
+      "userName": "user4",
+      "fullName": "Lucía Herrera",
+      "email": "lucia.herrera@example.com",
+      "phone": "999000004",
+      "role": "procurement_supervisor",
+      "organization": "Insumos Científicos SAC",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+    },
+    {
+      "id": 5,
+      "userName": "user5",
+      "fullName": "Andrés Paredes",
+      "email": "andres.paredes@example.com",
+      "phone": "999000005",
+      "role": "inspector",
+      "organization": "Control y Aseguramiento Lab S.A.C.",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+    }
+  ],
+  "inventory": [
+    {
+      "id": 2,
+      "name": "Reactivo NaCl",
+      "category": "Reactivo químico",
+      "quantity": 10,
+      "status": "Uso en prácticas",
+      "description": "Sal común utilizada para experimentos básicos"
+    },
+    {
+      "id": 3,
+      "name": "Guantes de látex",
+      "category": "Material de protección",
+      "quantity": 500,
+      "status": "En stock",
+      "description": "Guantes desechables sin polvo, talla M."
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "userId": 1,
+      "plan": "STANDARD",
+      "startDate": "2025-10-08T00:00:00Z",
+      "status": "ACTIVE"
+    }
+  ]
+}

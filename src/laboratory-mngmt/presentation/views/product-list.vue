@@ -14,7 +14,7 @@ const store = useProductProfileStore();
 const {products, productsLoaded, errors, fetchProducts, deleteProduct}=store;
 
 onMounted(()=>{
-  if (!usersLoaded) fetchProducts();
+  if (!productsLoaded) fetchProducts();
   console.log(products);
 });
 
@@ -97,5 +97,6 @@ const confirmDelete = (product) => {
 </template>
 
 <style scoped>
+
 
 </style>

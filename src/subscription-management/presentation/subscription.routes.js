@@ -1,7 +1,14 @@
 
 const SubscriptionList = () => import('./views/subscription-list.vue')
 const SubscriptionForm = () => import('./views/subscription-form.vue')
-
+/**
+ * Subscription module routes
+ *
+ * Each route defines a specific view:
+ *  - List of subscriptions
+ *  - Create a new subscription
+ *  - Edit an existing subscription
+ */
 export const subscriptionRoutes = [
     {
         path: 'subscriptions',

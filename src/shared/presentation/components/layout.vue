@@ -10,6 +10,7 @@ const items = [
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
   { label: "option.inventory", to: "/laboratory-inventory-management/inventory" },
+  { label: "option.subscriptions", to: "/subscription-management/subscriptions" },
 ];
 </script>
 

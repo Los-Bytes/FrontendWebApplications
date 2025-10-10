@@ -3,7 +3,7 @@ import { BaseApi } from '../../shared/infrastructure/base-api.js'
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js'
 import { SubscriptionAssembler } from './subscription.assembler.js'
 
-const subscriptionsPath = import.meta.env.VITE_SUBSCRIPTIONS_PATH
+const subscriptionsPath = import.meta.env.VITE_SUBSCRIPTIONS_ENDPOINT_PATH
 /**
  * SubscriptionManagementApi
  *

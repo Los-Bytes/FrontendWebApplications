@@ -11,6 +11,7 @@ const items = [
   { label: "option.users", to: "/user-profile/users" },
   { label: "option.inventory", to: "/laboratory-inventory-management/inventory" },
   { label: "option.subscriptions", to: "/subscription-management/subscriptions" },
+  { label: "option.products", to: "/product/products" },
 ];
 </script>
 

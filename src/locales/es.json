@@ -5,7 +5,9 @@
     "categories": "Categorías",
     "tutorials": "Tutoriales",
     "inventory": "Inventario",
-    "users": "Usuarios"
+    "users": "Usuarios",
+    "subscriptions": "Subscripciones",
+    "products": "Productos"
   },
   "authoring-phrase": {
     "intro": "Hecho con",

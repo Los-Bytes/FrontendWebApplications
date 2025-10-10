@@ -9,6 +9,7 @@ const items = [
   { label: "option.home", to: "/home" },
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
+  { label: "option.subscriptions", to: "/subscription-management/subscriptions" },
 ];
 </script>
 

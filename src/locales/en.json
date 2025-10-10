@@ -4,7 +4,8 @@
     "about": "About",
     "categories": "Categories",
     "tutorials": "Tutorials",
-    "users": "users"
+    "users": "Users",
+    "subscriptions": "Subscriptions"
   },
   "authoring-phrase": {
     "intro": "Made with",
@@ -46,5 +47,24 @@
   },
   "errors": {
     "occurred": "Errors occurred"
+  },
+  "subscription": {
+    "listTitle": "Subscriptions",
+    "plan": "Plan",
+    "startDate": "Start Date",
+    "status": "Status",
+    "statusActive": "Active",
+    "statusCancelled": "Cancelled",
+    "statusExpired": "Expired",
+    "trialDaysRemaining": "Trial days remaining: {{days}}",
+    "actions": {
+      "cancel": "Cancel Subscription",
+      "startTrial": "Start Trial"
+    }
+  },
+  "error": {
+    "cannotCancel": "Cannot cancel subscription with status {{status}}",
+    "cannotStartTrial": "Only active subscriptions can start a trial",
+    "invalidPayment": "Invalid payment method"
   }
 }

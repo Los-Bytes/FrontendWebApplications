@@ -55,5 +55,14 @@
       "documentRegistration": "DNI",
       "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
     }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "userId": 1,
+      "plan": "STANDARD",
+      "startDate": "2025-10-08T00:00:00Z",
+      "status": "ACTIVE"
+    }
   ]
 }

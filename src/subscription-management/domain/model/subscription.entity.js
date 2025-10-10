@@ -1,3 +1,6 @@
+/**
+ * Utility class for Subscription entity
+ */
 export class Subscription {
     /**
      * Creates a new subscription instance.

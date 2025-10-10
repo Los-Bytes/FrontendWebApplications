@@ -1,6 +1,7 @@
 import Home from "./shared/presentation/views/home.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import userProfileRoutes from "./user-profile/presentation/user-profile-routes.js";
+import inventoryRoutes from "./laboratory-inventory-management/presentation/inventory-routes.js";
 
 
 const about = () => import('./shared/presentation/views/about.vue');
@@ -11,6 +12,7 @@ const routes =[
     {path: '/home',            name: 'home',           component: Home, meta: { title: 'Home' } },
     {path: '/about',           name: 'about',          component:about , meta: { title: 'About' } },
     {path: '/user-profile', name:'user-profile', children:userProfileRoutes},
+    {path: '/laboratory-inventory-management', name:'laboratory-inventory-management', children:inventoryRoutes},
     {path: '/', redirect:'/home' },
     {path: '/:pathMatch(.*)*', name: 'not-found',      component: pageNotFound, meta: { title: 'Page not found' } }
 

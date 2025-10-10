@@ -55,5 +55,15 @@
       "documentRegistration": "DNI",
       "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
     }
+  ],
+  "inventory": [
+    {
+      "id": 2,
+      "name": "Reactivo NaCl",
+      "category": "Reactivo químico",
+      "quantity": 10,
+      "status": "Uso en prácticas",
+      "description": "Sal común utilizada para experimentos básicos"
+    }
   ]
 }

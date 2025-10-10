@@ -12,9 +12,11 @@ import {
     ConfirmDialog,
     DataTable, DialogService,
     Drawer,
+    InputNumber,
     InputText,
     Select,
     SelectButton,
+    Textarea,
     Toast, ToastService,
     Toolbar
 } from "primevue";
@@ -35,6 +37,8 @@ createApp(App)
     .component('pv-drawer', Drawer)
     .component('pv-toolbar', Toolbar)
     .component('pv-input-text', InputText)
+    .component('pv-input-number', InputNumber)
+    .component('pv-textarea', Textarea)
     .component('pv-select', Select)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)

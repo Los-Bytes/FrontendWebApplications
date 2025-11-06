@@ -1,6 +1,9 @@
 import Home from "./shared/presentation/views/home.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import userProfileRoutes from "./user-profile/presentation/user-profile-routes.js";
+import productProfileRoutes from "./laboratory-mngmt/presentation/product-routes.js";
+import laboratoryMngmtRoutes from "./laboratory-mngmt/presentation/laboratoryMngmt-routes.js";
+
 
 
 const about = () => import('./shared/presentation/views/about.vue');
@@ -11,6 +14,8 @@ const routes =[
     {path: '/home',            name: 'home',           component: Home, meta: { title: 'Home' } },
     {path: '/about',           name: 'about',          component:about , meta: { title: 'About' } },
     {path: '/user-profile', name:'user-profile', children:userProfileRoutes},
+    {path: '/product', name: 'product', children:productProfileRoutes},
+    {path: '/laboratoryMngmt', name: 'laboratoryMngmt', children:laboratoryMngmtRoutes},
     {path: '/', redirect:'/home' },
     {path: '/:pathMatch(.*)*', name: 'not-found',      component: pageNotFound, meta: { title: 'Page not found' } }
 

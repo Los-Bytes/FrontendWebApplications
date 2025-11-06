@@ -7,6 +7,7 @@ export class BaseApi{
     constructor() {
         this.#http=axios.create({
             baseURL:platformApi,
+
         })
     }
     get http(){

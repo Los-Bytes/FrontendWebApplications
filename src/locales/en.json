@@ -4,7 +4,10 @@
     "about": "About",
     "categories": "Categories",
     "tutorials": "Tutorials",
-    "users": "users"
+    "users": "users",
+    "products": "products",
+    "labResponsibles": "Lab Responsibles",
+    "laboratories": "Laboratories"
   },
   "authoring-phrase": {
     "intro": "Made with",

@@ -9,6 +9,10 @@ const items = [
   { label: "option.home", to: "/home" },
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
+  { label: "option.products", to: "/product/products" },
+  { label: "option.labResponsibles", to: "/laboratoryMngmt/labResponsibles" },
+  { label: "option.laboratories", to: "/laboratoryMngmt/laboratories" }
+
 ];
 </script>
 
@@ -17,7 +21,7 @@ const items = [
     <pv-toolbar class="pv-toolbar toolbar">
       <template #start>
         <div class="toolbar-brand">
-          <img src="/logo-lab.png" alt="LabIoT" class="toolbar-logo" />
+          <img src="https://logo.clearbit.com/BBVA.com" alt="LabIoT" class="toolbar-logo" />
         </div>
       </template>
 

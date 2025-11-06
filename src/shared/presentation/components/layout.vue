@@ -21,7 +21,7 @@ const items = [
     <pv-toolbar class="pv-toolbar toolbar">
       <template #start>
         <div class="toolbar-brand">
-          <img src="https://logo.clearbit.com/BBVA.com" alt="LabIoT" class="toolbar-logo" />
+          <img src="/logo-lab.png" alt="LabIoT" class="toolbar-logo" />
         </div>
       </template>
 

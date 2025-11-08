@@ -5,27 +5,26 @@
     "categories": "Categorías",
     "tutorials": "Tutoriales",
     "users": "Usuarios",
-    "subscriptions": "Subscripciones"
+    "subscriptions": "Suscripciones"
   },
   "authoring-phrase": {
     "intro": "Hecho con",
     "use": "utilizando",
-    "author": "por el Equipo de Desarrollo de {brand}"
+    "author": "por {brand} Development Team"
   },
   "about": {
     "title": "Acerca de LabIoT",
-    "content": "LabIoT es una solución desarrollada para digitalizar y automatizar los procesos de laboratorio mediante el Internet de las Cosas (IoT).\nSu arquitectura modular conecta sensores, dispositivos y usuarios en una misma plataforma, ofreciendo control, trazabilidad y análisis en tiempo real.\nEl objetivo de LabIoT es brindar a las instituciones científicas y educativas una herramienta moderna que impulse la eficiencia operativa, la seguridad de los datos y la innovación tecnológica en los entornos de laboratorio."
+    "content": "LabIoT es una solución desarrollada para digitalizar y automatizar procesos de laboratorio a través del Internet de las Cosas (IoT).\nSu arquitectura modular conecta sensores, dispositivos y usuarios dentro de una única plataforma, proporcionando control, trazabilidad y análisis en tiempo real.\nLabIoT tiene como objetivo proporcionar a instituciones científicas y educativas una herramienta moderna que mejore la eficiencia operacional, la seguridad de datos y la innovación tecnológica en entornos de laboratorio."
   },
   "home": {
     "title": "Bienvenido a LabIoT",
-    "content": "LabIoT es una plataforma inteligente que integra tecnología IoT para el monitoreo y gestión en tiempo real de los laboratorios.\nPermite registrar, visualizar y analizar datos de sensores como temperatura, humedad y otros parámetros críticos que influyen en la calidad de los experimentos y la conservación de materiales.\nCon LabIoT, los equipos técnicos pueden optimizar procesos, mejorar la trazabilidad y garantizar la estabilidad de las condiciones del laboratorio en todo momento."
+    "content": "LabIoT es una plataforma inteligente que integra tecnología IoT para el monitoreo y gestión en tiempo real de laboratorios.\nTe permite registrar, visualizar y analizar datos de sensores como temperatura, humedad y otros parámetros críticos que influyen en la calidad de experimentos y preservación de materiales.\nCon LabIoT, los equipos técnicos pueden optimizar procesos, mejorar la trazabilidad y garantizar condiciones estables del laboratorio en todo momento."
   },
   "page-not-found": {
     "title": "Página No Encontrada",
-    "content": "La ruta {unavailable-route} que está buscando no existe.",
-    "go-home": "Go Home"
+    "content": "La ruta {unavailable-route} que buscas no existe.",
+    "go-home": "Ir a Inicio"
   },
-
   "tutorials": {
     "title": "Tutoriales",
     "id": "ID",
@@ -33,7 +32,7 @@
     "category-id": "ID de Categoría",
     "actions": "Acciones",
     "new": "Nuevo Tutorial",
-    "confirm-delete": "¿Estás seguro de que quieres eliminar {title}?",
+    "confirm-delete": "¿Estás seguro de que deseas eliminar {title}?",
     "delete-header": "Confirmar Eliminación"
   },
   "tutorial": {
@@ -49,22 +48,96 @@
     "occurred": "Ocurrieron errores"
   },
   "subscription": {
-    "listTitle": "Suscripciones",
-    "plan": "Plan",
-    "startDate": "Fecha de inicio",
-    "status": "Estado",
-    "statusActive": "Activa",
-    "statusCancelled": "Cancelada",
-    "statusExpired": "Expirada",
-    "trialDaysRemaining": "Días de prueba restantes: {{days}}",
-    "actions": {
-      "cancel": "Cancelar suscripción",
-      "startTrial": "Iniciar prueba"
-    }
+    "title": "Elige tu plan de suscripción",
+    "plans": {
+      "basic": {
+        "name": "BÁSICO",
+        "price": "$9.99",
+        "period": "/mes",
+        "features": [
+          "Rastreo básico de inventario",
+          "Hasta 100 artículos",
+          "Soporte por email"
+        ]
+      },
+      "standard": {
+        "name": "ESTÁNDAR",
+        "price": "$19.99",
+        "period": "/mes",
+        "features": [
+          "Todas las características de Básico",
+          "Hasta 1000 artículos",
+          "Soporte RFID y código QR",
+          "Alertas en tiempo real",
+          "Soporte prioritario"
+        ]
+      },
+      "premium": {
+        "name": "PREMIUM",
+        "price": "$49.99",
+        "period": "/mes",
+        "features": [
+          "Todas las características de Estándar",
+          "Artículos ilimitados",
+          "Análisis avanzado",
+          "Monitoreo de temperatura",
+          "Soporte 24/7 dedicado",
+          "Integraciones personalizadas"
+        ]
+      }
+    },
+    "selectPlan": "Seleccionar plan",
+    "transaction": {
+      "success": "Transacción exitosa",
+      "id": "Transacción",
+      "selectedPlan": "Plan Seleccionado",
+      "totalAmount": "Monto Total",
+      "activeUntil": "Plan activo hasta"
+    },
+    "details": {
+      "mySubscription": "Mi suscripción",
+      "status": "Estado",
+      "active": "Activa",
+      "cancelled": "Cancelada",
+      "expired": "Expirada",
+      "plan": "Plan",
+      "startDate": "Inicio",
+      "expirationDate": "Vence",
+      "paymentMethod": "Método de pago",
+      "cardNumber": "Número de Tarjeta",
+      "cardholder": "Titular",
+      "changePlan": "Cambiar plan de suscripción",
+      "changePaymentMethod": "Cambiar método de pago",
+      "cancelSubscription": "Cancelar suscripción"
+    },
+    "payment": {
+      "title": "Registro de pago",
+      "selectedPlan": "Plan Seleccionado",
+      "totalAmount": "Monto Total",
+      "cardType": "Tarjeta de Crédito",
+      "cardNumber": "Número",
+      "cardholder": "Titular",
+      "expiration": "Vence",
+      "cvv": "CVV",
+      "savePaymentMethod": "Guardar este método de pago",
+      "completePurchase": "Completar pago"
+    },
+    "goToPanel": "Ir al PANEL"
   },
   "error": {
-    "cannotCancel": "No se puede cancelar la suscripción con estado {{status}}",
-    "cannotStartTrial": "Solo suscripciones activas pueden iniciar prueba",
+    "invalidCardNumber": "Número de tarjeta inválido",
+    "invalidCardholderName": "Nombre del titular inválido",
+    "invalidExpirationDate": "Fecha de vencimiento inválida",
+    "invalidCVV": "CVV inválido",
+    "invalidTransactionAmount": "Monto de transacción inválido",
+    "invalidTransactionStatus": "Estado de transacción inválido",
+    "invalidPlanType": "Tipo de plan inválido",
+    "invalidPlanAmount": "Monto de plan inválido",
+    "cannotCancel": "No se puede cancelar suscripción con estado {{status}}",
+    "cannotStartTrial": "Solo las suscripciones activas pueden iniciar una prueba",
+    "cannotChangePayment": "No se puede cambiar el método de pago - suscripción no activa",
+    "cannotChangePlan": "No se puede cambiar el plan - suscripción no activa",
+    "cannotExpire": "No se puede expirar la suscripción - suscripción no activa",
     "invalidPayment": "Método de pago inválido"
   }
 }

@@ -25,7 +25,6 @@
     "content": "The path {unavailable-route} you are looking for does not exist.",
     "go-home": "Go Home"
   },
-
   "tutorials": {
     "title": "Tutorials",
     "id": "ID",
@@ -49,22 +48,96 @@
     "occurred": "Errors occurred"
   },
   "subscription": {
-    "listTitle": "Subscriptions",
-    "plan": "Plan",
-    "startDate": "Start Date",
-    "status": "Status",
-    "statusActive": "Active",
-    "statusCancelled": "Cancelled",
-    "statusExpired": "Expired",
-    "trialDaysRemaining": "Trial days remaining: {{days}}",
-    "actions": {
-      "cancel": "Cancel Subscription",
-      "startTrial": "Start Trial"
-    }
+    "title": "Choose your subscription plan",
+    "plans": {
+      "basic": {
+        "name": "BASIC",
+        "price": "$9.99",
+        "period": "/month",
+        "features": [
+          "Basic inventory tracking",
+          "Up to 100 items",
+          "Email support"
+        ]
+      },
+      "standard": {
+        "name": "STANDARD",
+        "price": "$19.99",
+        "period": "/month",
+        "features": [
+          "All Basic features",
+          "Up to 1000 items",
+          "RFID & QR code support",
+          "Real-time alerts",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "PREMIUM",
+        "price": "$49.99",
+        "period": "/month",
+        "features": [
+          "All Standard features",
+          "Unlimited items",
+          "Advanced analytics",
+          "Temperature monitoring",
+          "24/7 dedicated support",
+          "Custom integrations"
+        ]
+      }
+    },
+    "selectPlan": "Select plan",
+    "transaction": {
+      "success": "Successful transaction",
+      "id": "Transaction",
+      "selectedPlan": "Selected Plan",
+      "totalAmount": "Total Amount",
+      "activeUntil": "Plan active until"
+    },
+    "details": {
+      "mySubscription": "My subscription",
+      "status": "Status",
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "plan": "Plan",
+      "startDate": "Start",
+      "expirationDate": "Expires",
+      "paymentMethod": "Payment method",
+      "cardNumber": "Card Number",
+      "cardholder": "Cardholder",
+      "changePlan": "Change subscription plan",
+      "changePaymentMethod": "Change payment method",
+      "cancelSubscription": "Cancel subscription"
+    },
+    "payment": {
+      "title": "Payment registration",
+      "selectedPlan": "Selected Plan",
+      "totalAmount": "Total Amount",
+      "cardType": "Credit Card",
+      "cardNumber": "Number",
+      "cardholder": "Cardholder",
+      "expiration": "Exp",
+      "cvv": "CVV",
+      "savePaymentMethod": "Save this payment method",
+      "completePurchase": "Complete payment"
+    },
+    "goToPanel": "Go to PANEL"
   },
   "error": {
+    "invalidCardNumber": "Invalid card number",
+    "invalidCardholderName": "Invalid cardholder name",
+    "invalidExpirationDate": "Invalid expiration date",
+    "invalidCVV": "Invalid CVV",
+    "invalidTransactionAmount": "Invalid transaction amount",
+    "invalidTransactionStatus": "Invalid transaction status",
+    "invalidPlanType": "Invalid plan type",
+    "invalidPlanAmount": "Invalid plan amount",
     "cannotCancel": "Cannot cancel subscription with status {{status}}",
     "cannotStartTrial": "Only active subscriptions can start a trial",
+    "cannotChangePayment": "Cannot change payment method - subscription not active",
+    "cannotChangePlan": "Cannot change plan - subscription not active",
+    "cannotExpire": "Cannot expire subscription - subscription not active",
     "invalidPayment": "Invalid payment method"
   }
 }

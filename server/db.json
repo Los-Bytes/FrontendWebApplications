@@ -60,9 +60,25 @@
     {
       "id": 1,
       "userId": 1,
-      "plan": "STANDARD",
-      "startDate": "2025-10-08T00:00:00Z",
-      "status": "ACTIVE"
+      "planType": "STANDARD",
+      "amount": 19.99,
+      "status": "ACTIVE",
+      "startDate": "2025-11-25",
+      "endDate": "2025-12-25",
+      "transactionId": "12345678",
+      "paymentMethod": "VISA",
+      "cardLastFourDigits": "1213",
+      "cardholderName": "José Paredes",
+      "expirationDate": "09/30"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "12345678",
+      "subscriptionId": 1,
+      "amount": 19.99,
+      "date": "2025-11-25",
+      "status": "SUCCESS"
     }
   ]
 }

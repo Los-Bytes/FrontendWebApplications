@@ -4,12 +4,17 @@
     "about": "Acerca de",
     "categories": "Categorías",
     "tutorials": "Tutoriales",
+<<<<<<< HEAD
     "inventory": "Inventario",
     "users": "Usuarios",
     "subscriptions": "Subscripciones",
     "products": "Productos",
     "labResponsibles": "Responsables de Laboratorio",
     "laboratories": "Laboratorios"
+=======
+    "users": "Usuarios",
+    "subscriptions": "Subscripciones"
+>>>>>>> 4cec12b904a58bf8a1743d6fb119e7a55d431a38
   },
   "authoring-phrase": {
     "intro": "Hecho con",
@@ -27,9 +32,55 @@
   "page-not-found": {
     "title": "Página No Encontrada",
     "content": "La ruta {unavailable-route} que está buscando no existe.",
+<<<<<<< HEAD
     "go-home": "Ir a Inicio"
   },
   "errors": {
     "occurred": "Ocurrieron errores"
+=======
+    "go-home": "Go Home"
+  },
+
+  "tutorials": {
+    "title": "Tutoriales",
+    "id": "ID",
+    "summary": "Resumen",
+    "category-id": "ID de Categoría",
+    "actions": "Acciones",
+    "new": "Nuevo Tutorial",
+    "confirm-delete": "¿Estás seguro de que quieres eliminar {title}?",
+    "delete-header": "Confirmar Eliminación"
+  },
+  "tutorial": {
+    "new-title": "Crear Nuevo Tutorial",
+    "edit-title": "Editar Tutorial",
+    "title": "Título",
+    "summary": "Resumen",
+    "category": "Categoría",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "errors": {
+    "occurred": "Ocurrieron errores"
+  },
+  "subscription": {
+    "listTitle": "Suscripciones",
+    "plan": "Plan",
+    "startDate": "Fecha de inicio",
+    "status": "Estado",
+    "statusActive": "Activa",
+    "statusCancelled": "Cancelada",
+    "statusExpired": "Expirada",
+    "trialDaysRemaining": "Días de prueba restantes: {{days}}",
+    "actions": {
+      "cancel": "Cancelar suscripción",
+      "startTrial": "Iniciar prueba"
+    }
+  },
+  "error": {
+    "cannotCancel": "No se puede cancelar la suscripción con estado {{status}}",
+    "cannotStartTrial": "Solo suscripciones activas pueden iniciar prueba",
+    "invalidPayment": "Método de pago inválido"
+>>>>>>> 4cec12b904a58bf8a1743d6fb119e7a55d431a38
   }
 }

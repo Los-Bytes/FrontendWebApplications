@@ -1,0 +1,35 @@
+{
+  "option": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "categories": "Categorías",
+    "tutorials": "Tutoriales",
+    "inventory": "Inventario",
+    "users": "Usuarios",
+    "subscriptions": "Subscripciones",
+    "products": "Productos",
+    "labResponsibles": "Responsables de Laboratorio",
+    "laboratories": "Laboratorios"
+  },
+  "authoring-phrase": {
+    "intro": "Hecho con",
+    "use": "utilizando",
+    "author": "por el Equipo de Desarrollo de {brand}"
+  },
+  "about": {
+    "title": "Acerca de LabIoT",
+    "content": "LabIoT es una solución desarrollada para digitalizar y automatizar los procesos de laboratorio mediante el Internet de las Cosas (IoT).\nSu arquitectura modular conecta sensores, dispositivos y usuarios en una misma plataforma, ofreciendo control, trazabilidad y análisis en tiempo real.\nEl objetivo de LabIoT es brindar a las instituciones científicas y educativas una herramienta moderna que impulse la eficiencia operativa, la seguridad de los datos y la innovación tecnológica en los entornos de laboratorio."
+  },
+  "home": {
+    "title": "Bienvenido a LabIoT",
+    "content": "LabIoT es una plataforma inteligente que integra tecnología IoT para el monitoreo y gestión en tiempo real de los laboratorios.\nPermite registrar, visualizar y analizar datos de sensores como temperatura, humedad y otros parámetros críticos que influyen en la calidad de los experimentos y la conservación de materiales.\nCon LabIoT, los equipos técnicos pueden optimizar procesos, mejorar la trazabilidad y garantizar la estabilidad de las condiciones del laboratorio en todo momento."
+  },
+  "page-not-found": {
+    "title": "Página No Encontrada",
+    "content": "La ruta {unavailable-route} que está buscando no existe.",
+    "go-home": "Ir a Inicio"
+  },
+  "errors": {
+    "occurred": "Ocurrieron errores"
+  }
+}

@@ -1,0 +1,169 @@
+<script setup>
+import {useI18n} from "vue-i18n";
+import { useRouter, useRoute } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import useInventoryStore from "../../application/inventory.store.js";
+import { InventoryItem } from "../../domain/model/inventory.js";
+
+const {t} =useI18n();
+const router = useRouter();
+const route = useRoute();
+const store = useInventoryStore();
+const { addItem, updateItem, getItemById, fetchItems, loadUsers, items, usersLoaded } = store;
+
+const isEdit = computed(() => !!route.params.id);
+const laboratoryId = computed(() => parseInt(route.params.labId));
+
+const form = ref({
+  name: "",
+  category: "",
+  quantity: 0,
+  description: "",
+  status: "En stock",
+  userId: null,
+});
+
+const usersList = computed(() => {
+  return Array.from(store.users.values());
+});
+
+onMounted(async () => {
+  if (!usersLoaded.value) {
+    await loadUsers();
+  }
+  
+  if (!items.value || items.value.length === 0) {
+    await fetchItems(laboratoryId.value);
+  }
+  
+  if (isEdit.value) {
+    const item = getItemById(route.params.id);
+    if (item) {
+      form.value = { 
+        name: item.name,
+        category: item.category,
+        quantity: item.quantity,
+        description: item.description,
+        status: item.status,
+        userId: item.userId
+      };
+    } else {
+      router.push({ 
+        name: "inventory-list", 
+        params: { labId: laboratoryId.value } 
+      });
+    }
+  }
+});
+
+const saveItem = async () => {
+  const newItem = new InventoryItem({
+    id: isEdit.value ? parseInt(route.params.id) : null,
+    name: form.value.name,
+    category: form.value.category,
+    quantity: form.value.quantity,
+    description: form.value.description,
+    status: form.value.status,
+    userId: form.value.userId,
+    laboratoryId: laboratoryId.value
+  });
+
+  try {
+    if (isEdit.value) {
+      await updateItem(newItem);
+    } else {
+      await addItem(newItem);
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    await router.push({ 
+      name: "inventory-list", 
+      params: { labId: laboratoryId.value } 
+    });
+    
+    setTimeout(async () => {
+      await fetchItems(laboratoryId.value);
+    }, 200);
+    
+  } catch (error) {
+    console.error("Error saving item:", error);
+  }
+};
+</script>
+
+<template>
+  <div class="p-4 inventory-form">
+    <h1 class="text-2xl font-bold mb-4">
+      {{ isEdit ? "Editar Ítem" : "Nuevo Ítem" }}
+    </h1>
+
+    <form @submit.prevent="saveItem" class="grid gap-4 max-w-xl">
+      <div class="field">
+        <label>Nombre</label>
+        <pv-input-text v-model="form.name" required class="w-full" />
+      </div>
+
+      <div class="field">
+        <label>Categoría</label>
+        <pv-input-text v-model="form.category" required class="w-full" />
+      </div>
+
+      <div class="field">
+        <label>Cantidad</label>
+        <pv-input-number v-model="form.quantity" required class="w-full" />
+      </div>
+
+      <div class="field">
+        <label>Descripción</label>
+        <pv-textarea v-model="form.description" rows="3" class="w-full" />
+      </div>
+
+      <div class="field">
+        <label>Estado</label>
+        <pv-select
+          v-model="form.status"
+          :options="['En stock', 'Agotado', 'Vendido', 'Uso en prácticas']"
+          class="w-full"
+        />
+      </div>
+
+      <div class="field">
+        <label>Usuario Asignado</label>
+        <pv-select
+          v-model="form.userId"
+          :options="usersList"
+          optionLabel="userName"
+          optionValue="id"
+          placeholder="Seleccionar usuario"
+          class="w-full"
+          :disabled="!usersLoaded"
+        />
+        <small v-if="!usersLoaded" class="text-gray-500">
+          Cargando usuarios...
+        </small>
+        <small v-else-if="usersList.length === 0" class="text-orange-500">
+          No hay usuarios disponibles
+        </small>
+      </div>
+
+      <div class="flex gap-2">
+        <pv-button type="submit" label="Guardar" icon="pi pi-save" />
+        <pv-button 
+          label="Cancelar" 
+          severity="secondary" 
+          @click="router.push({ name: 'inventory-list', params: { labId: laboratoryId } })" 
+        />
+      </div>
+    </form>
+  </div>
+</template>
+
+<style scoped>
+.inventory-form {
+  background: #51a2fd;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+</style>

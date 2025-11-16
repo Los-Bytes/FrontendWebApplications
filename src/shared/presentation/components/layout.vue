@@ -9,9 +9,10 @@ const items = [
   { label: "option.home", to: "/home" },
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
-  { label: "option.inventory", to: "/laboratory-inventory-management/inventory" },
-  { label: "option.subscriptions", to: "/subscription-management/subscriptions" },
-  { label: "option.products", to: "/product/products" },
+  { label: "option.subscriptions", to: "/subscription/subscriptions" },
+  //{ label: "option.labResponsibles", to: "/laboratory/labResponsibles" },
+  { label: "option.laboratories", to: "/laboratory/laboratories" },
+  //{ label: "option.inventory", to: "/inventory/inventory" }
 ];
 </script>
 
@@ -38,6 +39,7 @@ const items = [
   </div>
 
   <div class="main-content">
+    <pv-confirm-dialog />
     <router-view />
   </div>
 

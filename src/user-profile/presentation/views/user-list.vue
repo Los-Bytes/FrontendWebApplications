@@ -4,12 +4,14 @@ import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
 import {useConfirm} from "primevue";
 import useUserProfileStore from "../../application/user-profile.store.js";
+import useAuthStore from "../../../iam/application/auth.store.js";
 import {onMounted} from "vue";
 
 const {t}=useI18n();
 const router = useRouter();
 const confirm = useConfirm();
 const store = useUserProfileStore();
+const authStore = useAuthStore();
 const {users, usersLoaded, errors, fetchUsers, deleteUser}=store;
 
 onMounted(()=>{
@@ -29,18 +31,28 @@ const navigateEdit = (id) => {
 const confirmDelete = (user) => {
   confirm.require({
     message: 'Are you sure you want to delete this user?',
-    header: 'Are you sure you want to delete this user?',
+    header: 'Deleting User',
     icon: 'pi pi-exclamation-triangle',
     accept: () => { deleteUser(user); },
   });
 };
 
+function loginAsUser(user) {
+  authStore.login(user);
+  alert(`Logged in as: ${user.userName}`);
+  router.push({ name: "laboratoryMngmt-laboratories" });
+}
 
 </script>
 
 <template>
   <div class="p-4 users-page">
     <h1>Users</h1>
+
+    <div v-if="authStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
+      <strong>Current User:</strong> {{ authStore.currentUser.userName }} ({{ authStore.currentUser.fullName }})
+      <pv-button label="Logout" severity="secondary" size="small" @click="authStore.logout()" class="ml-3" />
+    </div>
 
     <div class="actions-row mb-3">
       <pv-button label="New User" icon="pi pi-plus" @click="navigateToNew" />
@@ -64,6 +76,12 @@ const confirmDelete = (user) => {
       <pv-column field="organization" header="Organization" />
       <pv-column header="Actions" style="width: 140px;">
         <template #body="slotProps">
+          <pv-button 
+            icon="pi pi-sign-in" 
+            text 
+            @click="loginAsUser(slotProps.data)" 
+            title="Login as this user" 
+          />
           <pv-button
               icon="pi pi-pencil"
               text

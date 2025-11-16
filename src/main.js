@@ -18,7 +18,8 @@ import {
     SelectButton,
     Textarea,
     Toast, ToastService,
-    Toolbar
+    Toolbar, Tag,
+    Dialog
 } from "primevue";
 import router from "./router.js";
 import pinia from "./pinia.js";
@@ -42,6 +43,12 @@ createApp(App)
     .component('pv-select', Select)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
+    .component('pv-tag', Tag)
+    .component('pv-dialog', Dialog)
     .use(router)
     .use(pinia)
     .mount('#app')
+
+import useAuthStore from '../src/iam/application/auth.store.js';
+const authStore = useAuthStore();
+authStore.loadUserFromStorage();

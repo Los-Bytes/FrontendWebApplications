@@ -1,9 +1,10 @@
 import Home from "./shared/presentation/views/home.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import userProfileRoutes from "./user-profile/presentation/user-profile-routes.js";
-import inventoryRoutes from "./laboratory-inventory-management/presentation/inventory-routes.js";
-import subscriptionRoutes from "./subscription-management/presentation/subscription.routes.js";
-import productProfileRoutes from "./laboratory-mngmt/presentation/product-routes.js";
+import subscriptionRoutes from "./subscription/presentation/subscription.routes.js";
+import laboratoryRoutes from "./laboratory/presentation/laboratoryMngmt-routes.js";
+import inventoryRoutes from "./inventory/presentation/inventory-routes.js";
+import historyRoutes from './history/presentation/history-routes.js';
 
 const about = () => import('./shared/presentation/views/about.vue');
 const pageNotFound = () => import('./shared/presentation/views/page-not-found.vue');
@@ -13,12 +14,12 @@ const routes =[
     {path: '/home',            name: 'home',           component: Home, meta: { title: 'Home' } },
     {path: '/about',           name: 'about',          component:about , meta: { title: 'About' } },
     {path: '/user-profile', name:'user-profile', children:userProfileRoutes},
-    {path: '/laboratory-inventory-management', name:'laboratory-inventory-management', children:inventoryRoutes},
-    {path:'/subscription-management', name: 'subscription-management', children:subscriptionRoutes},
-    {path: '/product', name: 'product', children:productProfileRoutes},
+    {path: '/subscription', name: 'subscription', children:subscriptionRoutes},
+    {path: '/laboratory', name: 'laboratory', children:laboratoryRoutes},
+    {path: '/inventory', name:'inventory', children:inventoryRoutes},
+    {path: '/history', name: 'history', children:historyRoutes},
     {path: '/', redirect:'/home' },
     {path: '/:pathMatch(.*)*', name: 'not-found',      component: pageNotFound, meta: { title: 'Page not found' } }
-
 ];
 
 const router=createRouter({

@@ -7,7 +7,9 @@
     "inventory": "Inventario",
     "users": "Usuarios",
     "subscriptions": "Subscripciones",
-    "products": "Productos"
+    "products": "Productos",
+    "labResponsibles": "Responsables de Laboratorio",
+    "laboratories": "Laboratorios"
   },
   "authoring-phrase": {
     "intro": "Hecho con",
@@ -25,27 +27,7 @@
   "page-not-found": {
     "title": "Página No Encontrada",
     "content": "La ruta {unavailable-route} que está buscando no existe.",
-    "go-home": "Go Home"
-  },
-
-  "tutorials": {
-    "title": "Tutoriales",
-    "id": "ID",
-    "summary": "Resumen",
-    "category-id": "ID de Categoría",
-    "actions": "Acciones",
-    "new": "Nuevo Tutorial",
-    "confirm-delete": "¿Estás seguro de que quieres eliminar {title}?",
-    "delete-header": "Confirmar Eliminación"
-  },
-  "tutorial": {
-    "new-title": "Crear Nuevo Tutorial",
-    "edit-title": "Editar Tutorial",
-    "title": "Título",
-    "summary": "Resumen",
-    "category": "Categoría",
-    "save": "Guardar",
-    "cancel": "Cancelar"
+    "go-home": "Ir a Inicio"
   },
   "errors": {
     "occurred": "Ocurrieron errores"

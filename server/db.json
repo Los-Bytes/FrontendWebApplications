@@ -289,5 +289,32 @@
       "startDate": "2025-10-08T00:00:00Z",
       "status": "ACTIVE"
     }
+  ],
+  "inventory": [
+    {
+      "id": 2,
+      "name": "Reactivo NaCl",
+      "category": "Reactivo químico",
+      "quantity": 10,
+      "status": "Uso en prácticas",
+      "description": "Sal común utilizada para experimentos básicos"
+    },
+    {
+      "id": 3,
+      "name": "Guantes de látex",
+      "category": "Material de protección",
+      "quantity": 500,
+      "status": "En stock",
+      "description": "Guantes desechables sin polvo, talla M."
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "userId": 1,
+      "plan": "STANDARD",
+      "startDate": "2025-10-08T00:00:00Z",
+      "status": "ACTIVE"
+    }
   ]
 }

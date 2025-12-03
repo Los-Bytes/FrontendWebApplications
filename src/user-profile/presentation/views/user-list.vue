@@ -47,15 +47,15 @@ function loginAsUser(user) {
 
 <template>
   <div class="p-4 users-page">
-    <h1>Users</h1>
+    <h1>{{ t('user-profile.title') }}</h1>
 
     <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Current User:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
+      <strong>{{ t('user-profile.current') }}:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
       <pv-button label="Logout" severity="secondary" size="small" @click="iamStore.logout()" class="ml-3" />
     </div>
 
     <div class="actions-row mb-3">
-      <pv-button label="New User" icon="pi pi-plus" @click="navigateToNew" />
+      <pv-button :label="t('user-profile.new-user')" icon="pi pi-plus" @click="navigateToNew" />
     </div>
 
     <pv-data-table
@@ -69,25 +69,25 @@ function loginAsUser(user) {
         class="users-table"
     >
       <pv-column field="id" header="ID" sortable />
-      <pv-column field="userName" header="Username" sortable />
-      <pv-column field="fullName" header="Full name" />
+      <pv-column field="userName" :header="t('user-profile.username')" sortable />
+      <pv-column field="fullName" :header="t('user-profile.fullname')" />
       <pv-column field="email" header="Email" />
-      <pv-column field="role" header="Role" />
-      <pv-column field="organization" header="Organization" />
-      <pv-column header="Actions" style="width: 140px;">
+      <pv-column field="role" :header="t('user-profile.role')" />
+      <pv-column field="organization" :header="t('user-profile.organization')" />
+      <pv-column :header="t('user-profile.action')" style="width: 140px;">
         <template #body="slotProps">
           <pv-button 
             icon="pi pi-sign-in" 
             text 
             @click="loginAsUser(slotProps.data)" 
-            title="Login as this user" 
+            :title="t('user-profile.login')"
           />
           <pv-button
               icon="pi pi-pencil"
               text
               rounded
               @click="navigateEdit(slotProps.data.id)"
-              title="Edit"
+              :title="t('user-profile.edit')"
           />
           <pv-button
               icon="pi pi-trash"
@@ -95,7 +95,7 @@ function loginAsUser(user) {
               rounded
               severity="danger"
               @click="confirmDelete(slotProps.data)"
-              title="Delete"
+              :title="t('user-profile.delete')"
           />
         </template>
       </pv-column>

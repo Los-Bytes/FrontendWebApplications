@@ -128,56 +128,56 @@ const saveItem = async () => {
 <template>
   <div class="p-4 inventory-form">
     <h1 class="text-2xl font-bold mb-4">
-      {{ isEdit ? "Editar Ítem" : "Nuevo Ítem" }}
+      {{ isEdit ? t('inventory.edit-item') : t('inventory.new-item') }}
     </h1>
 
     <!-- Información de límites -->
     <div v-if="!isEdit" class="mb-4 p-3 rounded" :class="canAddNewItem ? 'bg-blue-100' : 'bg-red-100'">
       <p>
-        <strong>Items en este laboratorio:</strong> {{ currentItemCount }} / 
-        <span v-if="currentLimits.maxInventoryItems === -1">Ilimitado</span>
+        <strong>{{ t('inventory.items') }}:</strong> {{ currentItemCount }} / 
+        <span v-if="currentLimits.maxInventoryItems === -1">{{ t('inventory.unlimited') }}</span>
         <span v-else>{{ currentLimits.maxInventoryItems }}</span>
       </p>
       <p v-if="!canAddNewItem" class="text-red-600 font-bold mt-2">
-        ⚠️ Has alcanzado el límite de items para tu plan actual. 
+        {{ t('inventory.limit-reached') }} 
         <router-link :to="{ name: 'subscription-plans' }" class="underline">
-          Mejora tu plan aquí
+          {{ t('inventory.upgrade') }}
         </router-link>
       </p>
     </div>
 
     <form @submit.prevent="saveItem" class="grid gap-4 max-w-xl">
       <div class="field">
-        <label>Nombre</label>
+        <label>{{ t('inventory.name') }}</label>
         <pv-input-text v-model="form.name" required class="w-full" />
       </div>
 
       <div class="field">
-        <label>Categoría</label>
+        <label>{{ t('inventory.category') }}</label>
         <pv-input-text v-model="form.category" required class="w-full" />
       </div>
 
       <div class="field">
-        <label>Cantidad</label>
+        <label>{{ t('inventory.quantity') }}</label>
         <pv-input-number v-model="form.quantity" required class="w-full" />
       </div>
 
       <div class="field">
-        <label>Descripción</label>
+        <label>{{ t('inventory.description') }}</label>
         <pv-textarea v-model="form.description" rows="3" class="w-full" />
       </div>
 
       <div class="field">
-        <label>Estado</label>
+        <label>{{ t('inventory.status') }}</label>
         <pv-select
           v-model="form.status"
-          :options="['En stock', 'Agotado', 'Vendido', 'Uso en prácticas']"
+          :options="[t('inventory.in-stock'), t('inventory.out-of-stock'), t('inventory.sold'), t('inventory.used')]"
           class="w-full"
         />
       </div>
 
       <div class="field">
-        <label>Usuario Asignado</label>
+        <label>{{ t('inventory.assigned') }}</label>
         <pv-select
           v-model="form.userId"
           :options="usersList"
@@ -188,22 +188,22 @@ const saveItem = async () => {
           :disabled="!usersLoaded"
         />
         <small v-if="!usersLoaded" class="text-gray-500">
-          Cargando usuarios...
+          {{ t('inventory.loading') }}
         </small>
         <small v-else-if="usersList.length === 0" class="text-orange-500">
-          No hay usuarios disponibles
+          {{ t('inventory.not-users') }}
         </small>
       </div>
 
       <div class="flex gap-2">
         <pv-button 
           type="submit" 
-          label="Guardar" 
+          :label="t('inventory.save')" 
           icon="pi pi-save"
           :disabled="!isEdit && !canAddNewItem"
         />
         <pv-button 
-          label="Cancelar" 
+          :label="t('inventory.cancel')" 
           severity="secondary" 
           @click="router.push({ name: 'inventory-list', params: { labId: laboratoryId } })" 
         />

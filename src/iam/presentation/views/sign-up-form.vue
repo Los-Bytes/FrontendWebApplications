@@ -1,7 +1,7 @@
 
 <script setup>
 import useIamStore from "../../application/iam.service.js";
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { SignUpCommand } from "../../domain/sign-up.command.js";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -23,12 +23,12 @@ const form = reactive({
   organization: ''
 });
 
-const roleOptions = [
-  { label: 'Technician', value: 'technician' },
-  { label: 'Researcher', value: 'researcher' },
-  { label: 'Procurement Supervisor', value: 'procurement_supervisor' },
-  { label: 'Inspector', value: 'inspector' }
-];
+const roleOptions = computed(() => [
+  { label: t('signup.technician'), value: 'technician' },
+  { label: t('signup.researcher'), value: 'researcher' },
+  { label: t('signup.procurement'), value: 'procurement_supervisor' },
+  { label: t('signup.inspector'), value: 'inspector' }
+]);
 
 /**
  * Performs the sign-up action by creating a SignUpCommand
@@ -94,7 +94,7 @@ function navigateToSignIn() {
               id="username" 
               v-model="form.username" 
               :class="{'p-invalid': !form.username}"
-              placeholder="Choose a username"
+              :placeholder="t('signup.choose-name')"
               class="w-full"
               :disabled="isLoading"
             />
@@ -107,7 +107,7 @@ function navigateToSignIn() {
               id="fullName" 
               v-model="form.fullName" 
               :class="{'p-invalid': !form.fullName}"
-              placeholder="Your full name"
+              :placeholder="t('signup.choose-fullname')"
               class="w-full"
               :disabled="isLoading"
             />
@@ -122,7 +122,7 @@ function navigateToSignIn() {
             v-model="form.email" 
             type="email"
             :class="{'p-invalid': !form.email}"
-            placeholder="your.email@example.com"
+            :placeholder="t('signup.example-email')"
             class="w-full"
             :disabled="isLoading"
           />
@@ -160,7 +160,7 @@ function navigateToSignIn() {
           <pv-input-text 
             id="organization" 
             v-model="form.organization" 
-            placeholder="Your organization name"
+            :placeholder="t('signup.org-name')"
             class="w-full"
             :disabled="isLoading"
           />
@@ -174,7 +174,7 @@ function navigateToSignIn() {
               v-model="form.password" 
               type="password"
               :class="{'p-invalid': !form.password}"
-              placeholder="Min. 6 characters"
+              :placeholder="t('signup.min-char')"
               class="w-full"
               :disabled="isLoading"
             />
@@ -188,7 +188,7 @@ function navigateToSignIn() {
               v-model="form.confirmPassword" 
               type="password"
               :class="{'p-invalid': form.password && form.password !== form.confirmPassword}"
-              placeholder="Re-enter password"
+              :placeholder="t('signup.re-pass')"
               class="w-full"
               :disabled="isLoading"
             />
@@ -200,7 +200,7 @@ function navigateToSignIn() {
 
         <pv-button 
           type="submit" 
-          label="Create Account" 
+          :label="t('signup.create')"
           icon="pi pi-user-plus"
           class="w-full sign-up-button"
           :loading="isLoading"
@@ -212,7 +212,7 @@ function navigateToSignIn() {
 
         <pv-button 
           type="button"
-          label="Sign In" 
+          :label="t('signup.sign-in')" 
           icon="pi pi-sign-in"
           severity="secondary"
           outlined

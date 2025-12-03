@@ -110,70 +110,70 @@ const navigateBack = () => {
 <template>
   <div class="p-4 laboratory-form">
     <h1 class="form-title">
-      {{ isEdit ? "Edit Laboratory" : "New Laboratory" }}
+      {{ isEdit ? t('laboratory.edit-lab') : t('laboratory.new-lab') }}
     </h1>
 
     <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded border border-solid border-white">
-      <strong>Creating as:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
+      <strong>{{ t('laboratory.create-as') }}:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
       <br>
-      <strong>Current Plan:</strong> {{ subscriptionStore.currentUserSubscription?.planType || 'Free' }}
+      <strong>{{ t('laboratory.current-plan') }}:</strong> {{ subscriptionStore.currentUserSubscription?.planType || 'Free' }}
       <br>
-      <small>You will be the administrator of this laboratory</small>
+      <small>{{ t('laboratory.message') }}</small>
     </div>
 
     <div class="mb-4 p-3 bg-yellow-500 rounded border border-solid border-yellow-100">
       <h3 class="font-bold mb-2">
         <i class="pi pi-info-circle"></i>
-        Subscription Limits
+        {{ t('laboratory.limit') }}
       </h3>
-      <p><strong>Members per lab:</strong> 
-        <span v-if="currentLimits.maxMembers === -1">Unlimited</span>
-        <span v-else> Up to {{ currentLimits.maxMembers }}</span>
+      <p><strong>{{ t('laboratory.max-member') }}:</strong> 
+        <span v-if="currentLimits.maxMembers === -1">{{ t('laboratory.unlimited') }}</span>
+        <span v-else> {{ t('laboratory.up-to') }} {{ currentLimits.maxMembers }}</span>
       </p>
-      <p><strong>Items per lab:</strong>
-        <span v-if="currentLimits.maxInventoryItems === -1">Unlimited</span>
-        <span v-else> Up to {{ currentLimits.maxInventoryItems }}</span>
+      <p><strong>{{ t('laboratory.max-item') }}:</strong>
+        <span v-if="currentLimits.maxInventoryItems === -1">{{ t('laboratory.unlimited') }}</span>
+        <span v-else> {{ t('laboratory.up-to') }} {{ currentLimits.maxInventoryItems }}</span>
       </p>
     </div>
 
     <form @submit.prevent="saveLaboratory" class="form-grid">
       <div class="field">
-        <label for="name">Name</label>
+        <label for="name">{{ t('laboratory.name') }}</label>
         <pv-input-text id="name" v-model="form.name" required class="w-full" autocomplete="organization" />
       </div>
 
       <div class="field">
-        <label for="address">Address</label>
+        <label for="address">{{ t('laboratory.address') }}</label>
         <pv-input-text id="address" v-model="form.address" required class="w-full" autocomplete="street-address" />
       </div>
 
       <div class="field">
-        <label for="phone">Phone</label>
+        <label for="phone">{{ t('laboratory.phone') }}</label>
         <pv-input-text id="phone" v-model="form.phone" required class="w-full" autocomplete="tel" />
       </div>
 
       <div class="field">
-        <label for="capacity">Capacity</label>
+        <label for="capacity">{{ t('laboratory.capacity') }}</label>
         <pv-input-number id="capacity" v-model="form.capacity" required class="w-full" />
       </div>
 
       <div class="field">
-        <label for="labResponsibleId">Add Member User ID (Optional)</label>
+        <label for="labResponsibleId">{{ t('laboratory.add-member') }}</label>
         <pv-input-number 
           id="labResponsibleId" 
           v-model="form.labResponsibleId" 
           class="w-full"
-          placeholder="Leave empty or add a user ID to add as member"
+          :placeholder="t('laboratory.placeholder')"
         />
-        <small>Enter a user ID to add them as a member of this laboratory</small>
+        <small>{{ t('laboratory.add-message') }}</small>
         <small v-if="form.labResponsibleId && !canAddMembers(1)" class="text-red-600">
           ⚠️ Your plan only allows {{ currentLimits.maxMembers }} members. Upgrade to add more.
         </small>
       </div>
 
       <div class="field actions">
-        <pv-button type="submit" label="Save" icon="pi pi-save" />
-        <pv-button label="Cancel" severity="secondary" class="ml-2" @click="navigateBack" />
+        <pv-button type="submit" :label="t('laboratory.save')" icon="pi pi-save" />
+        <pv-button :label="t('laboratory.cancel')" severity="secondary" class="ml-2" @click="navigateBack" />
       </div>
     </form>
 

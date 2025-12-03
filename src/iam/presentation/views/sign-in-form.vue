@@ -60,7 +60,7 @@ function navigateToSignUp() {
             id="username" 
             v-model="form.username" 
             :class="{'p-invalid': !form.username}"
-            placeholder="Enter your username"
+            :placeholder="t('loggin.enter-name')"
             class="w-full"
             :disabled="isLoading"
           />
@@ -74,7 +74,7 @@ function navigateToSignUp() {
             v-model="form.password" 
             :class="{'p-invalid': !form.password}" 
             type="password"
-            placeholder="Enter your password"
+            :placeholder="t('loggin.enter-pass')"
             class="w-full"
             :disabled="isLoading"
           />
@@ -83,7 +83,7 @@ function navigateToSignUp() {
 
         <pv-button 
           type="submit" 
-          label="Sign In" 
+          :label="t('loggin.sign-in')"
           icon="pi pi-sign-in"
           class="w-full sign-in-button"
           :loading="isLoading"
@@ -95,7 +95,7 @@ function navigateToSignUp() {
 
         <pv-button 
           type="button"
-          label="Create Account"
+          :label="t('loggin.create-account')"
           icon="pi pi-user-plus"
           severity="secondary"
           outlined

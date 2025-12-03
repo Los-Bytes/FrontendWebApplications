@@ -27,12 +27,18 @@ onMounted(async () => {
     return;
   }
 
+  // Cargar planes y suscripciones
   await fetchPlans();
   await fetchSubscriptions();
   
-  // Cargar datos para estadísticas
+  // ✅ CARGAR datos para estadísticas
   if (!labStore.laboratoriesLoaded.value) {
     await labStore.fetchLaboratories();
+  }
+
+  // ✅ CARGAR inventario para contar items
+  if (!inventoryStore.itemsLoaded.value) {
+    await inventoryStore.fetchItems();
   }
 });
 
@@ -49,28 +55,43 @@ const planColor = computed(() => {
 const usageStats = computed(() => {
   const userLabs = labStore.userLaboratories.value || [];
   
-  // Calcular total de miembros (unique members across all labs)
+  // ✅ Calcular total de miembros únicos across all labs del usuario
   const allMembers = new Set();
   userLabs.forEach(lab => {
     if (lab.adminUserId) allMembers.add(lab.adminUserId);
-    if (lab.memberUserIds) {
+    if (lab.memberUserIds && Array.isArray(lab.memberUserIds)) {
       lab.memberUserIds.forEach(id => allMembers.add(id));
     }
   });
 
-  // Calcular promedio de items por laboratorio
+  // ✅ Calcular total de items del usuario
   let totalItems = 0;
   userLabs.forEach(lab => {
     const labItems = inventoryStore.items.filter(item => item.laboratoryId === lab.id);
     totalItems += labItems.length;
   });
+
+  // ✅ Promedio de items por laboratorio
   const avgItemsPerLab = userLabs.length > 0 ? Math.round(totalItems / userLabs.length) : 0;
+
+  // ✅ Calcular promedio de miembros por laboratorio
+  let totalMembersAcrossLabs = 0;
+  userLabs.forEach(lab => {
+    let labMemberCount = 0;
+    if (lab.adminUserId) labMemberCount++;
+    if (lab.memberUserIds && Array.isArray(lab.memberUserIds)) {
+      labMemberCount += lab.memberUserIds.length;
+    }
+    totalMembersAcrossLabs += labMemberCount;
+  });
+  const avgMembersPerLab = userLabs.length > 0 ? Math.round(totalMembersAcrossLabs / userLabs.length) : 0;
 
   return {
     totalLaboratories: userLabs.length,
     totalMembers: allMembers.size,
     totalItems: totalItems,
-    avgItemsPerLab: avgItemsPerLab
+    avgItemsPerLab: avgItemsPerLab,
+    avgMembersPerLab: avgMembersPerLab
   };
 });
 
@@ -86,24 +107,12 @@ function formatDate(timestamp) {
 function navigateToPlans() {
   router.push({ name: 'subscription-plans' });
 }
-
-function getUsagePercentage(current, max) {
-  if (max === -1) return 0; // Ilimitado
-  if (max === 0) return 0;
-  return Math.min(Math.round((current / max) * 100), 100);
-}
-
-function getUsageColor(percentage) {
-  if (percentage < 50) return 'success';
-  if (percentage < 80) return 'warn';
-  return 'danger';
-}
 </script>
 
 <template>
   <div class="p-4 my-subscription-container">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-bold">Panel de usuario</h1>
+      <h1 class="text-3xl font-bold">Mi Suscripción</h1>
       <pv-button 
         label="Ver Planes" 
         icon="pi pi-th-large"
@@ -113,11 +122,11 @@ function getUsageColor(percentage) {
     </div>
     
     <!-- User Info -->
-    <div v-if="iamStore.currentUser" class="mb-6 p-4 bg-blue-300 rounded-lg border-2 border-blue-100">
+    <div v-if="iamStore.currentUser" class="mb-6 p-4 bg-blue-100 rounded-lg border-2 border-blue-300">
       <div class="flex items-center gap-4">
         <img 
           :src="iamStore.currentUser.imgToImage" 
-          :alt="iamStore.currentUser.userName"
+          :alt="iamStore.currentUser.username"
           class="w-16 h-16 rounded-full border-4 border-white shadow-lg"
         />
         <div>
@@ -151,7 +160,7 @@ function getUsageColor(percentage) {
               :severity="planColor"
               class="text-3xl px-6 py-3"
             />
-            <p v-if="currentPlan" class="mt-2 text-xl font-semibold text-gray-900">
+            <p v-if="currentPlan" class="mt-2 text-xl font-semibold">
               {{ currentPlan.getPriceFormatted() }} / {{ currentPlan.period === 'monthly' ? 'mes' : 'año' }}
             </p>
           </div>
@@ -166,7 +175,7 @@ function getUsageColor(percentage) {
         <div class="grid grid-cols-2 gap-4 mt-4">
           <div class="info-item bg-white p-3 rounded shadow">
             <span class="label text-gray-600">Fecha de inicio:</span>
-            <span class="value text-lg font-semibold text-gray-900">{{ formatDate(currentUserSubscription.startDate) }}</span>
+            <span class="value text-lg font-semibold text-gray-600">{{ formatDate(currentUserSubscription.startDate) }}</span>
           </div>
           <div class="info-item bg-white p-3 rounded shadow">
             <span class="label text-gray-600">Estado:</span>
@@ -202,13 +211,13 @@ function getUsageColor(percentage) {
               <span v-else>{{ currentLimits.maxMembers }}</span>
             </p>
             <p v-if="currentLimits.maxMembers !== -1" class="text-sm text-gray-500 mt-2">
-              Promedio actual: {{ usageStats.totalLaboratories > 0 ? Math.round(usageStats.totalMembers / usageStats.totalLaboratories) : 0 }}
+              Promedio actual: {{ usageStats.avgMembersPerLab }}
             </p>
           </div>
 
           <!-- Inventory Items Limit -->
           <div class="limit-item p-4 bg-green-50 rounded-lg shadow">
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center justify-between mb-3 ">
               <i class="pi pi-box text-3xl text-green-600"></i>
               <pv-tag 
                 v-if="currentLimits.maxInventoryItems === -1"

@@ -14,10 +14,48 @@
       "suscriptionPlan": "Free"
     }
   ],
-  "inventory": [],
-  "history": [],
+  "inventory": [
+    {
+      "id": 1,
+      "name": "Par de Guantes de Latex",
+      "category": "Equipamento",
+      "quantity": 5,
+      "status": "En stock",
+      "description": "Guantes de latex marca Epin",
+      "userId": 1,
+      "userName": "",
+      "laboratoryId": 1
+    }
+  ],
+  "history": [
+    {
+      "id": 1,
+      "inventoryItemId": 1,
+      "laboratoryId": 1,
+      "action": "created",
+      "previousStatus": "",
+      "newStatus": "En stock",
+      "quantity": 5,
+      "userId": 1,
+      "userName": "u201916143",
+      "timestamp": "2025-12-03T13:36:12.173Z",
+      "description": "Item \"Par de Guantes de Latex\" creado"
+    }
+  ],
   "labResponsibles": [],
-  "Laboratories": [],
+  "Laboratories": [
+    {
+      "id": 1,
+      "name": "Laboratorios UPC",
+      "address": "Av. de la Marina 2810 San Miguel",
+      "phone": "+51963844498",
+      "capacity": 1000,
+      "registrationDate": "2025-12-03T13:24:05.174Z",
+      "labResponsibleId": null,
+      "adminUserId": 1,
+      "memberUserIds": []
+    }
+  ],
   "subscriptions": [
     {
       "id": 1,

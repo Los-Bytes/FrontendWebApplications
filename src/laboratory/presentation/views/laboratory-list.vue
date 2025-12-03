@@ -64,26 +64,26 @@ const confirmDelete = (labId) => {
 
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">My Laboratories</h1>
+    <h1 class="text-2xl font-bold mb-4">{{ t('laboratory.title') }}</h1>
     
     <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Logged in as:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
+      <strong>{{ t('laboratory.logged') }}:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
     </div>
     
     <div class="flex justify-between items-center mb-4">
-      <pv-button label="New Laboratory" icon="pi pi-plus" @click="navigateToNew" />
+      <pv-button :label="t('laboratory.new-lab')" icon="pi pi-plus" @click="navigateToNew" />
     </div>
 
     <div v-if="userLaboratories.length === 0">
-      <p>No laboratories found. You are not admin or member of any laboratory yet.</p>
+      <p>{{ t('laboratory.not-lab') }}</p>
     </div>
 
     <pv-data-table :value="userLaboratories" paginator :rows="10" striped-rows>
       <pv-column field="id" header="ID" sortable />
-      <pv-column field="name" header="Name" sortable />
-      <pv-column field="address" header="Address" />
-      <pv-column field="phone" header="Phone" />
-      <pv-column field="capacity" header="Capacity" />
+      <pv-column field="name" :header="t('laboratory.name')" sortable />
+      <pv-column field="address" :header="t('laboratory.address')" />
+      <pv-column field="phone" :header="t('laboratory.phone')" />
+      <pv-column field="capacity" :header="t('laboratory.capacity')" />
 
       <pv-column header="Admin ID">
         <template #body="slotProps">
@@ -91,24 +91,24 @@ const confirmDelete = (labId) => {
         </template>
       </pv-column>
       
-      <pv-column header="Your Role">
+      <pv-column :header="t('laboratory.your-role')">
         <template #body="slotProps">
           <span v-if="!slotProps.data.adminUserId">No Admin</span>
           <pv-tag 
-            :value="isLabAdmin(slotProps.data.id) ? 'Admin' : 'Member'" 
+            :value="isLabAdmin(slotProps.data.id) ? 'Admin' : t('laboratory.member')" 
             :severity="isLabAdmin(slotProps.data.id) ? 'success' : 'info'" 
           />
         </template>
       </pv-column>
       
-      <pv-column header="Actions">
+      <pv-column :header="t('laboratory.actions')">
         <template #body="slotProps">
           <pv-button 
             v-if="isLabAdmin(slotProps.data.id)"
             icon="pi pi-pencil" 
             text 
             @click="navigateEdit(slotProps.data.id)" 
-            title="Edit" 
+            :title="t('laboratory.edit')"
           />
           
           <pv-button 
@@ -117,7 +117,7 @@ const confirmDelete = (labId) => {
             text 
             severity="danger" 
             @click="confirmDelete(slotProps.data.id)" 
-            title="Delete" 
+            :title="t('laboratory.delete')"
           />
           
           <pv-button 
@@ -125,7 +125,7 @@ const confirmDelete = (labId) => {
             text 
             severity="help"
             @click="router.push({ name: 'inventory-list', params: { labId: slotProps.data.id } })" 
-            title="Ver Inventario" 
+            :title="t('laboratory.view')"
           />
         </template>
       </pv-column>

@@ -4,7 +4,9 @@ import { useRouter, useRoute } from "vue-router";
 import useInventoryStore from "../../application/inventory.service.js";
 import useLaboratoryMngmtStore from "../../../laboratory/application/laboratory.service.js";
 import useIamStore from "../../../iam/application/iam.service.js";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const store = useInventoryStore();
@@ -145,44 +147,44 @@ function navigateBack() {
 
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-2">Inventario de Laboratorio</h1>
+    <h1 class="text-2xl font-bold mb-2">{{ t('inventory.title') }}</h1>
     
     <div v-if="currentLab" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Laboratorio:</strong> {{ currentLab.name }}
+      <strong>{{ t('inventory.lab') }}:</strong> {{ currentLab.name }}
       <br>
-      <strong>Dirección:</strong> {{ currentLab.address }}
+      <strong>{{ t('inventory.address') }}:</strong> {{ currentLab.address }}
     </div>
 
     <div class="flex justify-between items-center mb-4">
       <div class="flex gap-2">
-        <pv-button label="Volver a Labs" icon="pi pi-arrow-left" severity="secondary" @click="navigateBack" />
-        <pv-button label="Nuevo Ítem" icon="pi pi-plus" @click="navigateToNew" />
-        <pv-button label="Historial" icon="pi pi-clock" severity="secondary" @click="navigateToHistory" />
+        <pv-button :label="t('inventory.return')" icon="pi pi-arrow-left" severity="secondary" @click="navigateBack" />
+        <pv-button :label="t('inventory.new-item')" icon="pi pi-plus" @click="navigateToNew" />
+        <pv-button :label="t('inventory.history')" icon="pi pi-clock" severity="secondary" @click="navigateToHistory" />
       </div>
     </div>
 
     <div v-if="!itemsLoaded">
-      <p>Cargando inventario...</p>
+      <p>{{ t('inventory.load-inv') }}</p>
     </div>
 
     <div v-else-if="labItems.length === 0">
-      <p>No hay items en el inventario de este laboratorio.</p>
+      <p>{{ t('inventory.no-items') }}</p>
     </div>
 
     <pv-data-table v-if="itemsLoaded && labItems.length > 0" :value="labItems" paginator :rows="8" striped-rows>
       <pv-column field="id" header="ID" sortable />
-      <pv-column field="name" header="Nombre" sortable />
-      <pv-column field="category" header="Categoría" />
-      <pv-column field="quantity" header="Cantidad" sortable />
-      <pv-column field="status" header="Estado" />
-      <pv-column field="userName" header="Usuario Asignado" sortable />
-      <pv-column header="Acciones">
+      <pv-column field="name" :header="t('inventory.name')" sortable />
+      <pv-column field="category" :header="t('inventory.category')" />
+      <pv-column field="quantity" :header="t('inventory.quantity')" sortable />
+      <pv-column field="status" :header="t('inventory.status')" />
+      <pv-column field="userName" :header="t('inventory.assigned')" sortable />
+      <pv-column :header="t('inventory.actions')">
         <template #body="slotProps">
           <pv-button 
             icon="pi pi-shopping-cart" 
             text 
             @click="openSellDialog(slotProps.data)" 
-            title="Vender"
+            :title="t('inventory.sell')"
             :disabled="slotProps.data.quantity === 0"
           />
           <pv-button 
@@ -190,7 +192,7 @@ function navigateBack() {
             text 
             severity="info" 
             @click="openUseDialog(slotProps.data)" 
-            title="Uso en prácticas"
+            :title="t('inventory.use')"
             :disabled="slotProps.data.quantity === 0"
           />
           <pv-button 
@@ -198,27 +200,27 @@ function navigateBack() {
             text 
             severity="success" 
             @click="openReturnDialog(slotProps.data)" 
-            title="Retornar al stock"
+            :title="t('inventory.refund')"
           />
           <pv-button 
             icon="pi pi-trash" 
             text 
             severity="danger" 
             @click="deleteItem(slotProps.data.id)" 
-            title="Eliminar" 
+            :title="t('inventory.delete')"
           />
         </template>
       </pv-column>
     </pv-data-table>
 
     <!-- Dialog para Vender -->
-    <pv-dialog v-model:visible="showSellDialog" header="Vender Item" :modal="true" :style="{ width: '400px' }">
+    <pv-dialog v-model:visible="showSellDialog" :header="t('inventory.sell-title')" :modal="true" :style="{ width: '400px' }">
       <div v-if="selectedItem" class="flex flex-col gap-4">
-        <p><strong>Item:</strong> {{ selectedItem.name }}</p>
-        <p><strong>Stock disponible:</strong> {{ selectedItem.quantity }}</p>
+        <p><strong>{{ t('inventory.item') }}:</strong> {{ selectedItem.name }}</p>
+        <p><strong>{{ t('inventory.stock') }}:</strong> {{ selectedItem.quantity }}</p>
         
         <div class="field">
-          <label for="sellQuantity">Cantidad a vender:</label>
+          <label for="sellQuantity">{{ t('inventory.q-to-sell') }}:</label>
           <pv-input-number 
             id="sellQuantity" 
             v-model="quantityToProcess" 
@@ -230,19 +232,19 @@ function navigateBack() {
       </div>
       
       <template #footer>
-        <pv-button label="Cancelar" severity="secondary" @click="showSellDialog = false" />
-        <pv-button label="Vender" icon="pi pi-check" @click="confirmSell" />
+        <pv-button :label="t('inventory.cancel')" severity="secondary" @click="showSellDialog = false" />
+        <pv-button :label="t('inventory.sell')" icon="pi pi-check" @click="confirmSell" />
       </template>
     </pv-dialog>
 
     <!-- Dialog para Usar en Prácticas -->
-    <pv-dialog v-model:visible="showUseDialog" header="Usar en Prácticas" :modal="true" :style="{ width: '400px' }">
+    <pv-dialog v-model:visible="showUseDialog" :header="t('inventory.use-title')" :modal="true" :style="{ width: '400px' }">
       <div v-if="selectedItem" class="flex flex-col gap-4">
-        <p><strong>Item:</strong> {{ selectedItem.name }}</p>
-        <p><strong>Stock disponible:</strong> {{ selectedItem.quantity }}</p>
+        <p><strong>{{ t('inventory.item') }}:</strong> {{ selectedItem.name }}</p>
+        <p><strong>{{ t('inventory.stock') }}:</strong> {{ selectedItem.quantity }}</p>
         
         <div class="field">
-          <label for="useQuantity">Cantidad a usar:</label>
+          <label for="useQuantity">{{ t('inventory.q-to-use') }}:</label>
           <pv-input-number 
             id="useQuantity" 
             v-model="quantityToProcess" 
@@ -254,19 +256,19 @@ function navigateBack() {
       </div>
       
       <template #footer>
-        <pv-button label="Cancelar" severity="secondary" @click="showUseDialog = false" />
-        <pv-button label="Usar" icon="pi pi-check" severity="info" @click="confirmUse" />
+        <pv-button :label="t('inventory.cancel')" severity="secondary" @click="showUseDialog = false" />
+        <pv-button :label="t('inventory.use-for')" icon="pi pi-check" severity="info" @click="confirmUse" />
       </template>
     </pv-dialog>
 
     <!-- Dialog para Retornar -->
-    <pv-dialog v-model:visible="showReturnDialog" header="Retornar al Stock" :modal="true" :style="{ width: '400px' }">
+    <pv-dialog v-model:visible="showReturnDialog" :header="t('inventory.return-title')" :modal="true" :style="{ width: '400px' }">
       <div v-if="selectedItem" class="flex flex-col gap-4">
-        <p><strong>Item:</strong> {{ selectedItem.name }}</p>
-        <p><strong>Stock actual:</strong> {{ selectedItem.quantity }}</p>
+        <p><strong>{{ t('inventory.item') }}:</strong> {{ selectedItem.name }}</p>
+        <p><strong>{{ t('inventory.stock') }}:</strong> {{ selectedItem.quantity }}</p>
         
         <div class="field">
-          <label for="returnQuantity">Cantidad a retornar:</label>
+          <label for="returnQuantity">{{ t('inventory.q-to-return') }}:</label>
           <pv-input-number 
             id="returnQuantity" 
             v-model="quantityToProcess" 
@@ -277,8 +279,8 @@ function navigateBack() {
       </div>
       
       <template #footer>
-        <pv-button label="Cancelar" severity="secondary" @click="showReturnDialog = false" />
-        <pv-button label="Retornar" icon="pi pi-check" severity="success" @click="confirmReturn" />
+        <pv-button :label="t('inventory.cancel')" severity="secondary" @click="showReturnDialog = false" />
+        <pv-button :label="t('inventory.refund-to')" icon="pi pi-check" severity="success" @click="confirmReturn" />
       </template>
     </pv-dialog>
   </div>

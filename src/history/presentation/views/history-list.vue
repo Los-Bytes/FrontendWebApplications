@@ -93,22 +93,22 @@ function translateAction(action) {
 
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-2">{{ t('laboratory.title') }}</h1>
+    <h1 class="text-2xl font-bold mb-2">{{ t('history.title') }}</h1>
     
     <div v-if="currentLab" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>{{ t('laboratory.lab') }}:</strong> {{ currentLab.name }}
+      <strong>{{ t('history.lab') }}:</strong> {{ currentLab.name }}
     </div>
 
     <div class="flex justify-between items-center mb-4">
-      <pv-button label="Volver al Inventario" icon="pi pi-arrow-left" @click="navigateBack" />
+      <pv-button :label="t('history.return')" icon="pi pi-arrow-left" @click="navigateBack" />
     </div>
 
     <div v-if="!entriesLoaded">
-      <p>{{ t('laboratory.loading') }}</p>
+      <p>{{ t('history.loading') }}</p>
     </div>
 
     <div v-else-if="labHistory.length === 0">
-      <p>{{ t('laboratory.not-lab') }}</p>
+      <p>{{ t('history.not-hist') }}</p>
     </div>
 
     <pv-data-table 
@@ -120,13 +120,13 @@ function translateAction(action) {
       sortField="timestamp"
       :sortOrder="-1"
     >
-      <pv-column field="timestamp" header="Fecha/Hora" sortable>
+      <pv-column field="timestamp" :header="t('history.date')" sortable>
         <template #body="slotProps">
           {{ formatDate(slotProps.data.timestamp) }}
         </template>
       </pv-column>
 
-      <pv-column field="action" header="Acción" sortable>
+      <pv-column field="action" :header="t('history.status')" sortable>
         <template #body="slotProps">
           <pv-tag 
             :value="translateAction(slotProps.data.action)" 
@@ -135,15 +135,15 @@ function translateAction(action) {
         </template>
       </pv-column>
 
-      <pv-column field="description" header="Descripción" />
+      <pv-column field="description" :header="t('history.description')" />
 
-      <pv-column field="previousStatus" header="Estado Anterior" />
+      <pv-column field="previousStatus" :header="t('history.previous')" />
       
-      <pv-column field="newStatus" header="Nuevo Estado" />
+      <pv-column field="newStatus" :header="t('history.new')" />
 
-      <pv-column field="quantity" header="Cantidad" />
+      <pv-column field="quantity" :header="t('history.quantity')" />
 
-      <pv-column field="userName" header="Usuario" />
+      <pv-column field="userName" :header="t('history.user')" />
     </pv-data-table>
   </div>
 </template>

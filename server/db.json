@@ -2,319 +2,83 @@
   "users": [
     {
       "id": 1,
-      "userName": "user1",
-      "fullName": "Diego Soto",
-      "email": "djfnsjdnfjsdfs@gmail.com",
-      "phone": "65786767777777",
-      "role": "technician",
-      "organization": "Laboratorios Andes S.A.",
-      "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-    },
-    {
-      "id": 2,
-      "userName": "user2",
-      "fullName": "María López",
-      "email": "maria.lopez@example.com",
-      "phone": "999000002",
-      "role": "researcher",
-      "organization": "BioInnovate Perú SAC",
-      "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-    },
-    {
-      "id": 3,
-      "userName": "user3",
-      "fullName": "José Ramírez",
-      "email": "jose.ramirez@example.com",
-      "phone": "999000003",
-      "role": "technician",
-      "organization": "Servicios de Laboratorio del Sur EIRL",
-      "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-    },
-    {
-      "id": 4,
-      "userName": "user4",
-      "fullName": "Lucía Herrera",
-      "email": "lucia.herrera@example.com",
-      "phone": "999000004",
-      "role": "procurement_supervisor",
-      "organization": "Insumos Científicos SAC",
-      "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-    },
-    {
-      "id": 5,
-      "userName": "user5",
-      "fullName": "Andrés Paredes",
-      "email": "andres.paredes@example.com",
-      "phone": "999000005",
-      "role": "inspector",
-      "organization": "Control y Aseguramiento Lab S.A.C.",
-      "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-    },
-    {
-      "id": 6,
-      "userName": "user6",
+      "userName": "u201916143",
+      "password": "contra123",
       "fullName": "Marcelo Mazuelos",
-      "email": "Marcelo572000@gmail.com",
+      "email": "u201916143@upc.edu.pe",
       "phone": "+51963844498",
       "role": "technician",
       "organization": "Universidad Peruana de Ciencias Aplicadas",
       "documentRegistration": "DNI",
-      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg",
+      "suscriptionPlan": "Free"
     }
   ],
   "inventory": [],
-  "history": [
+  "history": [],
+  "labResponsibles": [],
+  "Laboratories": [],
+  "subscriptions": [
     {
       "id": 1,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 10,
       "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-01-15T10:00:00Z",
-      "description": "Item creado"
-    },
-    {
-      "id": 2,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "sold",
-      "previousStatus": "En stock",
-      "newStatus": "Vendido",
-      "quantity": 10,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-01-16T14:30:00Z",
-      "description": "Item vendido"
-    },
-    {
-      "id": 3,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T05:09:11.869Z",
-      "description": "Item \"Guantes Latex Primele\" creado"
-    },
-    {
-      "id": 4,
-      "inventoryItemId": 2,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 100,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T16:20:30.524Z",
-      "description": "Item \"Compuesto X\" creado"
-    },
-    {
-      "id": 5,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T16:40:06.964Z",
-      "description": "Item \"Guantes Latex Primele\" creado"
-    },
-    {
-      "id": 6,
-      "inventoryItemId": 2,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T16:42:20.662Z",
-      "description": "Item \"Compuesto X\" creado"
-    },
-    {
-      "id": 7,
-      "inventoryItemId": 3,
-      "laboratoryId": 1,
-      "action": "created",
-      "previousStatus": "",
-      "newStatus": "En stock",
-      "quantity": 300,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T17:25:50.177Z",
-      "description": "Item \"Item de ejemplo\" creado"
-    },
-    {
-      "id": 8,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "sold",
-      "previousStatus": "En stock",
-      "newStatus": "Vendido",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T19:13:32.483Z",
-      "description": "Item \"Guantes Latex Primele\" marcado como vendido"
-    },
-    {
-      "id": 9,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "updated",
-      "previousStatus": "Vendido",
-      "newStatus": "Vendido",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T19:13:32.491Z",
-      "description": "Item \"Guantes Latex Primele\" actualizado"
-    },
-    {
-      "id": 10,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "updated",
-      "previousStatus": "Vendido",
-      "newStatus": "Vendido",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T19:13:32.491Z",
-      "description": "Item \"Guantes Latex Primele\" actualizado"
-    },
-    {
-      "id": 11,
-      "inventoryItemId": 1,
-      "laboratoryId": 1,
-      "action": "deleted",
-      "previousStatus": "Vendido",
-      "newStatus": "",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T21:55:10.411Z",
-      "description": "Item \"Guantes Latex Primele\" eliminado"
-    },
-    {
-      "id": 12,
-      "inventoryItemId": 2,
-      "laboratoryId": 1,
-      "action": "deleted",
-      "previousStatus": "En stock",
-      "newStatus": "",
-      "quantity": 30,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T21:55:11.305Z",
-      "description": "Item \"Compuesto X\" eliminado"
-    },
-    {
-      "id": 13,
-      "inventoryItemId": 3,
-      "laboratoryId": 1,
-      "action": "deleted",
-      "previousStatus": "En stock",
-      "newStatus": "",
-      "quantity": 300,
-      "userId": 1,
-      "userName": "user1",
-      "timestamp": "2025-11-15T21:55:12.368Z",
-      "description": "Item \"Item de ejemplo\" eliminado"
+      "planType": "Free",
+      "startDate": "2025-12-03T04:41:47.780Z",
+      "endDate": null,
+      "maxMembers": 3,
+      "maxInventoryItems": 50,
+      "isActive": true
     }
   ],
-  "labResponsibles": [
+  "plans": [
     {
       "id": 1,
-      "userid": 1,
-      "accessLevel": "MANAGER"
-    },
-    {
-      "id": 2,
-      "userid": 2,
-      "accessLevel": "MANAGER"
-    },
-    {
-      "id": 3,
-      "userid": 3,
-      "accessLevel": "MANAGER"
-    },
-    {
-      "id": 4,
-      "userid": 4,
-      "accessLevel": "MANAGER"
-    },
-    {
-      "id": 5,
-      "userid": 5,
-      "accessLevel": "MANAGER"
-    }
-  ],
-  "Laboratories": [
-    {
-      "id": 1,
-      "name": "Laboratorios UPC",
-      "address": "Jr. Sucre 560 #55 San miguel",
-      "phone": "963844498",
-      "capacity": 50,
-      "registrationDate": "2025-11-14T07:38:32.244Z",
-      "labResponsibleId": 2,
-      "adminUserId": 1,
-      "memberUserIds": [
-        2
+      "name": "Free",
+      "price": 0,
+      "currency": "USD",
+      "period": "monthly",
+      "maxMembers": 3,
+      "maxInventoryItems": 50,
+      "features": [
+        "Hasta 3 miembros por laboratorio",
+        "Hasta 50 items en inventario",
+        "Historial básico",
+        "Soporte por email"
       ]
-    }
-  ],
-  "subscriptions": [
-    {
-      "id": 1,
-      "userId": 1,
-      "plan": "STANDARD",
-      "startDate": "2025-10-08T00:00:00Z",
-      "status": "ACTIVE"
-    }
-  ],
-  "inventory": [
+    },
     {
       "id": 2,
-      "name": "Reactivo NaCl",
-      "category": "Reactivo químico",
-      "quantity": 10,
-      "status": "Uso en prácticas",
-      "description": "Sal común utilizada para experimentos básicos"
+      "name": "Pro",
+      "price": 19.99,
+      "currency": "USD",
+      "period": "monthly",
+      "maxMembers": 10,
+      "maxInventoryItems": 200,
+      "features": [
+        "Hasta 10 miembros por laboratorio",
+        "Hasta 200 items en inventario",
+        "Historial completo",
+        "Soporte prioritario",
+        "Reportes avanzados"
+      ]
     },
     {
       "id": 3,
-      "name": "Guantes de látex",
-      "category": "Material de protección",
-      "quantity": 500,
-      "status": "En stock",
-      "description": "Guantes desechables sin polvo, talla M."
-    }
-  ],
-  "subscriptions": [
-    {
-      "id": 1,
-      "userId": 1,
-      "plan": "STANDARD",
-      "startDate": "2025-10-08T00:00:00Z",
-      "status": "ACTIVE"
+      "name": "Max",
+      "price": 49.99,
+      "currency": "USD",
+      "period": "monthly",
+      "maxMembers": -1,
+      "maxInventoryItems": -1,
+      "features": [
+        "Miembros ilimitados por laboratorio",
+        "Items ilimitados en inventario",
+        "Historial completo con exportación",
+        "Soporte 24/7",
+        "Reportes avanzados y personalizados",
+        "API access",
+        "Prioridad en nuevas características"
+      ]
     }
   ]
 }

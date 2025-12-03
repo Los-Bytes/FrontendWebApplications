@@ -1,8 +1,8 @@
-import { Subscription } from "../domain/model/subscription.js";
+import { SubscriptionPlan } from "../domain/model/subscription-plan.js";
 
-export class SubscriptionAssembler {
+export class SubscriptionPlanAssembler {
   static toEntityFromResource(resource) {
-    return new Subscription({ ...resource });
+    return new SubscriptionPlan({ ...resource });
   }
 
   static toEntityFromResponse(response) {
@@ -16,10 +16,12 @@ export class SubscriptionAssembler {
     
     if (response.data instanceof Array) {
       resources = response.data;
-    } else if (response.data["subscriptions"]) {
-      resources = response.data["subscriptions"];
+    } else if (response.data["plans"]) {
+      resources = response.data["plans"];
+    } else if (response.data["subscription-plans"]) {
+      resources = response.data["subscription-plans"];
     } else {
-      // Si es un objeto único (como al crear/actualizar)
+      // Si es un objeto único
       resources = [response.data];
     }
     
@@ -29,13 +31,13 @@ export class SubscriptionAssembler {
   static toResourceFromEntity(entity) {
     return {
       id: entity.id,
-      userId: entity.userId,
-      planType: entity.planType,
-      startDate: entity.startDate,
-      endDate: entity.endDate,
+      name: entity.name,
+      price: entity.price,
+      currency: entity.currency,
+      period: entity.period,
       maxMembers: entity.maxMembers,
       maxInventoryItems: entity.maxInventoryItems,
-      isActive: entity.isActive
+      features: entity.features
     };
   }
 }

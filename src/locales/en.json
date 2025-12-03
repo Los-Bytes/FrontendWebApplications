@@ -2,13 +2,9 @@
   "option": {
     "home": "Home",
     "about": "About",
-    "categories": "Categories",
-    "tutorials": "Tutorials",
-    "inventory": "Inventory",
     "users": "Users",
-    "subscriptions": "Subscriptions",
-    "products": "Products",
-    "labResponsibles": "Lab Responsibles",
+    "mySubscription": "Dashboard",
+    "inventory": "Inventory",
     "laboratories": "Laboratories"
   },
   "authoring-phrase": {
@@ -31,5 +27,40 @@
   },
   "errors": {
     "occurred": "Errors occurred"
+  },
+  "laboratory":{
+    "title": "Historial de Inventario",
+    "lab": "Laboratory",
+    "loading": "Loading history...",
+    "not-lab": "There is no recorded history for this laboratory."
+  },
+  "loggin":{
+    "title": "Welcome Back",
+    "subtitle": "Sign in to access your laboratory dashboard",
+    "username": "Username",
+    "user-error": "Username is required.",
+    "password": "Password",
+    "pass-error": "Password is required.",
+    "divider": "Don't have an account?",
+    "copyright": "© 2025 LabIoT Platform. All rights reserved."
+  },
+  "signup":{
+    "title": "Create Account",
+    "subtitle": "Join LabIot to manage your laboratory",
+    "username": "Username *",
+    "user-error": "Username is required.",
+    "fullname": "Full Name *",
+    "full-error": "Full name is requiered.",
+    "email": "Email *",
+    "email-error": "Email is required.",
+    "phone": "Phone",
+    "role": "Role",
+    "organization": "Organization",
+    "password": "Password *",
+    "confirm-password": "Confirm Password *",
+    "pass-error": "Password is required.",
+    "not-match": "Password did not match",
+    "divider": "Already have an account?",
+    "copyright": "© 2025 LabIoT Platform. All rights reserved."
   }
 }

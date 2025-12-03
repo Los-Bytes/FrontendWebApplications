@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import FooterContent from "./footer-content.vue";
 import LanguageSwitcher from "./language-switcher.vue";
+import AuthenticationSection from "../../../iam/presentation/components/authentication-section.vue";
 
 const { t } = useI18n();
 
@@ -9,10 +10,8 @@ const items = [
   { label: "option.home", to: "/home" },
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
-  { label: "option.subscriptions", to: "/subscription/subscriptions" },
-  //{ label: "option.labResponsibles", to: "/laboratory/labResponsibles" },
+  { label: "option.mySubscription", to: "/subscription/my-subscription" },
   { label: "option.laboratories", to: "/laboratory/laboratories" },
-  //{ label: "option.inventory", to: "/inventory/inventory" }
 ];
 </script>
 
@@ -33,6 +32,7 @@ const items = [
             </router-link>
           </pv-button>
         </div>
+        <authentication-section />
         <language-switcher />
       </template>
     </pv-toolbar>

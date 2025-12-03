@@ -2,14 +2,18 @@
 import {useI18n} from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { ref, computed, onMounted } from "vue";
-import useInventoryStore from "../../application/inventory.store.js";
+import useInventoryStore from "../../application/inventory.service.js";
+import useSubscriptionStore from "../../../subscription/application/subscription.service.js";
 import { InventoryItem } from "../../domain/model/inventory.js";
 
 const {t} =useI18n();
 const router = useRouter();
 const route = useRoute();
 const store = useInventoryStore();
+const subscriptionStore = useSubscriptionStore();
+
 const { addItem, updateItem, getItemById, fetchItems, loadUsers, items, usersLoaded } = store;
+const { currentLimits, canAddInventoryItems, fetchSubscriptions, fetchPlans } = subscriptionStore;
 
 const isEdit = computed(() => !!route.params.id);
 const laboratoryId = computed(() => parseInt(route.params.labId));
@@ -27,11 +31,33 @@ const usersList = computed(() => {
   return Array.from(store.users.values());
 });
 
+// Contar items actuales del laboratorio
+const currentItemCount = computed(() => {
+  if (!store.items) return 0;
+  return store.items.filter(item => item.laboratoryId === laboratoryId.value).length;
+});
+
+// Verificar si puede agregar más items
+const canAddNewItem = computed(() => {
+  if (isEdit.value) return true; // Editando, no cuenta como nuevo
+  return canAddInventoryItems(currentItemCount.value);
+});
+
 onMounted(async () => {
+  // Cargar suscripciones
+  if (!subscriptionStore.plansLoaded.value) {
+    await fetchPlans();
+  }
+  if (!subscriptionStore.subscriptionsLoaded.value) {
+    await fetchSubscriptions();
+  }
+
+  // Cargar usuarios
   if (!usersLoaded.value) {
     await loadUsers();
   }
   
+  // Cargar items
   if (!items.value || items.value.length === 0) {
     await fetchItems(laboratoryId.value);
   }
@@ -57,6 +83,12 @@ onMounted(async () => {
 });
 
 const saveItem = async () => {
+  // Validar límites solo para nuevos items
+  if (!isEdit.value && !canAddNewItem.value) {
+    alert(`Your current plan allows up to ${currentLimits.value.maxInventoryItems} inventory items per laboratory. Current count: ${currentItemCount.value}. Please upgrade your subscription to add more items.`);
+    return;
+  }
+
   const newItem = new InventoryItem({
     id: isEdit.value ? parseInt(route.params.id) : null,
     name: form.value.name,
@@ -88,6 +120,7 @@ const saveItem = async () => {
     
   } catch (error) {
     console.error("Error saving item:", error);
+    alert("Error saving item. Please try again.");
   }
 };
 </script>
@@ -97,6 +130,21 @@ const saveItem = async () => {
     <h1 class="text-2xl font-bold mb-4">
       {{ isEdit ? "Editar Ítem" : "Nuevo Ítem" }}
     </h1>
+
+    <!-- Información de límites -->
+    <div v-if="!isEdit" class="mb-4 p-3 rounded" :class="canAddNewItem ? 'bg-blue-100' : 'bg-red-100'">
+      <p>
+        <strong>Items en este laboratorio:</strong> {{ currentItemCount }} / 
+        <span v-if="currentLimits.maxInventoryItems === -1">Ilimitado</span>
+        <span v-else>{{ currentLimits.maxInventoryItems }}</span>
+      </p>
+      <p v-if="!canAddNewItem" class="text-red-600 font-bold mt-2">
+        ⚠️ Has alcanzado el límite de items para tu plan actual. 
+        <router-link :to="{ name: 'subscription-plans' }" class="underline">
+          Mejora tu plan aquí
+        </router-link>
+      </p>
+    </div>
 
     <form @submit.prevent="saveItem" class="grid gap-4 max-w-xl">
       <div class="field">
@@ -148,7 +196,12 @@ const saveItem = async () => {
       </div>
 
       <div class="flex gap-2">
-        <pv-button type="submit" label="Guardar" icon="pi pi-save" />
+        <pv-button 
+          type="submit" 
+          label="Guardar" 
+          icon="pi pi-save"
+          :disabled="!isEdit && !canAddNewItem"
+        />
         <pv-button 
           label="Cancelar" 
           severity="secondary" 

@@ -1,9 +1,9 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import useLaboratoryMngmtStore from "../../application/laboratoryMngmt.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
-
+import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
+import useIamStore from "../../../iam/application/iam.service.js"; // ✅ ACTUALIZADO
+import useSubscriptionStore from "../../../subscription/application/subscription.service.js";
 import { computed, onMounted, ref } from "vue";
 import { Laboratory } from "../../domain/model/laboratory.js";
 
@@ -11,8 +11,11 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const store = useLaboratoryMngmtStore();
-const authStore = useAuthStore();
+const iamStore = useIamStore(); // ✅ ACTUALIZADO
+const subscriptionStore = useSubscriptionStore();
+
 const { errors, addLaboratory, updateLaboratory, fetchLaboratories, getLaboratoryById } = store;
+const { currentLimits, canAddMembers, fetchSubscriptions, fetchPlans } = subscriptionStore;
 
 const form = ref({
   name: '',
@@ -24,8 +27,22 @@ const form = ref({
 
 const isEdit = computed(() => !!route.params.id);
 
+const canCreateLab = computed(() => {
+  if (isEdit.value) return true;
+  const userLabs = store.userLaboratories.value;
+  const currentPlan = subscriptionStore.currentPlan.value;
+  if (currentPlan && currentPlan.name === 'Max') return true;
+  return true;
+});
+
 onMounted(async () => {
-  // ✅ Verificar si laboratories está definido y tiene length
+  if (!subscriptionStore.plansLoaded.value) {
+    await fetchPlans();
+  }
+  if (!subscriptionStore.subscriptionsLoaded.value) {
+    await fetchSubscriptions();
+  }
+
   if (!store.laboratories || store.laboratories.length === 0) {
     await fetchLaboratories();
   }
@@ -45,6 +62,19 @@ onMounted(async () => {
 });
 
 const saveLaboratory = async () => {
+  if (!canCreateLab.value) {
+    alert("You have reached the maximum number of laboratories for your current plan. Please upgrade your subscription.");
+    return;
+  }
+
+  if (form.value.labResponsibleId) {
+    const memberCount = 1;
+    if (!canAddMembers(memberCount)) {
+      alert(`Your current plan allows up to ${currentLimits.value.maxMembers} members per laboratory. Please upgrade to add more members.`);
+      return;
+    }
+  }
+
   const laboratory = new Laboratory({
     id: isEdit.value ? parseInt(route.params.id) : null,
     name: form.value.name,
@@ -53,7 +83,7 @@ const saveLaboratory = async () => {
     capacity: form.value.capacity,
     registrationDate: new Date().toISOString(),
     labResponsibleId: form.value.labResponsibleId,
-    adminUserId: authStore.currentUser?.id,
+    adminUserId: iamStore.currentUser?.id, // ✅ ACTUALIZADO
     memberUserIds: form.value.labResponsibleId ? [parseInt(form.value.labResponsibleId)] : []
   });
 
@@ -64,12 +94,11 @@ const saveLaboratory = async () => {
       await addLaboratory(laboratory);
     }
 
-    // ✅ Esperar un poco antes de navegar
     await new Promise(resolve => setTimeout(resolve, 100));
-    
     navigateBack();
   } catch (error) {
     console.error("Error saving laboratory:", error);
+    alert("Error saving laboratory. Please try again.");
   }
 };
 
@@ -84,10 +113,27 @@ const navigateBack = () => {
       {{ isEdit ? "Edit Laboratory" : "New Laboratory" }}
     </h1>
 
-    <div v-if="authStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded border border-solid border-white">
-      <strong>Creating as:</strong> {{ authStore.currentUser.userName }} ({{ authStore.currentUser.fullName }})
+    <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded border border-solid border-white">
+      <strong>Creating as:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
+      <br>
+      <strong>Current Plan:</strong> {{ subscriptionStore.currentUserSubscription?.planType || 'Free' }}
       <br>
       <small>You will be the administrator of this laboratory</small>
+    </div>
+
+    <div class="mb-4 p-3 bg-yellow-500 rounded border border-solid border-yellow-100">
+      <h3 class="font-bold mb-2">
+        <i class="pi pi-info-circle"></i>
+        Subscription Limits
+      </h3>
+      <p><strong>Members per lab:</strong> 
+        <span v-if="currentLimits.maxMembers === -1">Unlimited</span>
+        <span v-else> Up to {{ currentLimits.maxMembers }}</span>
+      </p>
+      <p><strong>Items per lab:</strong>
+        <span v-if="currentLimits.maxInventoryItems === -1">Unlimited</span>
+        <span v-else> Up to {{ currentLimits.maxInventoryItems }}</span>
+      </p>
     </div>
 
     <form @submit.prevent="saveLaboratory" class="form-grid">
@@ -120,6 +166,9 @@ const navigateBack = () => {
           placeholder="Leave empty or add a user ID to add as member"
         />
         <small>Enter a user ID to add them as a member of this laboratory</small>
+        <small v-if="form.labResponsibleId && !canAddMembers(1)" class="text-red-600">
+          ⚠️ Your plan only allows {{ currentLimits.maxMembers }} members. Upgrade to add more.
+        </small>
       </div>
 
       <div class="field actions">

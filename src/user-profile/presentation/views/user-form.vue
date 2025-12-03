@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed, onMounted } from "vue";
-import useUserProfileStore from "../../application/user-profile.store.js";
+import useUserProfileStore from "../../application/user-profile.service.js";
 import { User } from "../../domain/model/user.js";
 
 const { t } = useI18n();

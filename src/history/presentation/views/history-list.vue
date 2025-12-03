@@ -1,15 +1,17 @@
 <script setup>
+import { useI18n } from "vue-i18n";
 import { onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useHistoryStore from "../../application/history.store.js";
-import useLaboratoryMngmtStore from "../../../laboratory/application/laboratoryMngmt.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
+import useLaboratoryMngmtStore from "../../../laboratory/application/laboratory.service.js";
+import useIamStore from "../../../iam/application/iam.service.js";
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const historyStore = useHistoryStore();
 const labStore = useLaboratoryMngmtStore();
-const authStore = useAuthStore();
+const iamStore = useIamStore();
 
 const { entries, entriesLoaded, fetchHistory } = historyStore;
 const laboratoryId = computed(() => parseInt(route.params.labId));
@@ -26,9 +28,9 @@ const labHistory = computed(() => {
 });
 
 onMounted(async () => {
-  if (!authStore.isAuthenticated) {
+  if (!iamStore.isSignedIn) {
     alert("Please login first");
-    router.push({ name: 'users-list' });
+    router.push({ name: 'iam-sign-in' });
     return;
   }
 
@@ -91,10 +93,10 @@ function translateAction(action) {
 
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-2">Historial de Inventario</h1>
+    <h1 class="text-2xl font-bold mb-2">{{ t('laboratory.title') }}</h1>
     
     <div v-if="currentLab" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Laboratorio:</strong> {{ currentLab.name }}
+      <strong>{{ t('laboratory.lab') }}:</strong> {{ currentLab.name }}
     </div>
 
     <div class="flex justify-between items-center mb-4">
@@ -102,11 +104,11 @@ function translateAction(action) {
     </div>
 
     <div v-if="!entriesLoaded">
-      <p>Cargando historial...</p>
+      <p>{{ t('laboratory.loading') }}</p>
     </div>
 
     <div v-else-if="labHistory.length === 0">
-      <p>No hay historial registrado para este laboratorio.</p>
+      <p>{{ t('laboratory.not-lab') }}</p>
     </div>
 
     <pv-data-table 

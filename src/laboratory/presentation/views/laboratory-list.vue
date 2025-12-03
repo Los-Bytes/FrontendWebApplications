@@ -1,75 +1,73 @@
 <script setup>
+import {useI18n} from "vue-i18n";
+import {useRouter} from "vue-router";
+import {useConfirm} from "primevue";
+import {onMounted, watch} from "vue";
+import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
+import useIamStore from "../../../iam/application/iam.service.js"; // ✅ ACTUALIZADO
 
-  import {useI18n} from "vue-i18n";
-  import {useRouter} from "vue-router";
-  import {useConfirm} from "primevue";
-  import {onMounted, watch} from "vue";
-  import useLaboratoryMngmtStore from "../../application/laboratoryMngmt.store.js";
-  import useAuthStore from "../../../iam/application/auth.store.js";
+const {t}=useI18n();
+const router = useRouter();
+const confirm = useConfirm();
+const store = useLaboratoryMngmtStore();
+const iamStore = useIamStore(); // ✅ ACTUALIZADO
+const {userLaboratories, laboratoriesLoaded, fetchLaboratories,
+  deleteLaboratory, isLabAdmin}=store;
 
-  const {t}=useI18n();
-  const router = useRouter();
-  const confirm = useConfirm();
-  const store = useLaboratoryMngmtStore();
-  const authStore = useAuthStore();
-  const {userLaboratories, laboratoriesLoaded, fetchLaboratories,
-    deleteLaboratory, isLabAdmin}=store;
-
-  onMounted(()=>{
-    if (!authStore.isAuthenticated) {
-      alert("Please login first");
-      router.push({ name: 'users-list' });
-      return;
-    }
-    loadData();
-  });
-
-  async function loadData() {
-    await fetchLaboratories();
-    console.log('Laboratories loaded:', userLaboratories.value);
-    console.log('Current user:', authStore.currentUser);
+onMounted(()=>{
+  if (!iamStore.isSignedIn) { // ✅ ACTUALIZADO
+    alert("Please login first");
+    router.push({ name: 'iam-sign-in' }); // ✅ ACTUALIZADO
+    return;
   }
+  loadData();
+});
 
-  watch(() => router.currentRoute.value.fullPath, (newPath) => {
-    if (newPath.includes('/laboratories') && !newPath.includes('/new') && !newPath.includes('/edit')) {
-      loadData();
+async function loadData() {
+  await fetchLaboratories();
+  console.log('Laboratories loaded:', userLaboratories.value);
+  console.log('Current user:', iamStore.currentUser); // ✅ ACTUALIZADO
+}
+
+watch(() => router.currentRoute.value.fullPath, (newPath) => {
+  if (newPath.includes('/laboratories') && !newPath.includes('/new') && !newPath.includes('/edit')) {
+    loadData();
+  }
+});
+
+const navigateToNew = () => {
+  router.push({name:'laboratoryMngmt-laboratory-new'});
+};
+
+const navigateEdit = (id) => {
+  console.log(id);
+  router.push({name:'laboratoryMngmt-laboratory-edit', params: {id} });
+};
+
+const confirmDelete = (labId) => {
+  confirm.require({
+    message: 'Are you sure you want to delete this laboratory?',
+    header: 'Deleting Laboratory',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+    try {
+      await deleteLaboratory(labId);
+      console.log('Laboratory deleted successfully');
+      await loadData();
+    } catch (error) {
+      console.error('Error deleting laboratory:', error);
     }
+  }
   });
-
-  const navigateToNew = () => {
-    router.push({name:'laboratoryMngmt-laboratory-new'});
-  };
-
-  const navigateEdit = (id) => {
-    console.log(id);
-    router.push({name:'laboratoryMngmt-laboratory-edit', params: {id} });
-  };
-
-  const confirmDelete = (labId) => {
-    confirm.require({
-      message: 'Are you sure you want to delete this laboratory?',
-      header: 'Deleting Laboratory',
-      icon: 'pi pi-exclamation-triangle',
-      accept: async () => {
-      try {
-        await deleteLaboratory(labId);
-        console.log('Laboratory deleted successfully');
-        await loadData();
-      } catch (error) {
-        console.error('Error deleting laboratory:', error);
-      }
-    }
-    });
-  };
-
+};
 </script>
 
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-4">My Laboratories</h1>
     
-    <div v-if="authStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Logged in as:</strong> {{ authStore.currentUser.userName }} ({{ authStore.currentUser.fullName }})
+    <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
+      <strong>Logged in as:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
     </div>
     
     <div class="flex justify-between items-center mb-4">

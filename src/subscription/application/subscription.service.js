@@ -1,116 +1,190 @@
-import { SubscriptionAssembler } from '../infrastructure/subscription.assembler.js'
-import { SubscriptionManagementApi } from '../infrastructure/subscription-management.api.js'
-/**
- * SubscriptionService
- *
- * Service layer that coordinates subscription operations between
- * the domain layer and the infrastructure layer.
- *
- * This class acts as an intermediary — it translates domain commands
- * into payloads expected by the API and maps responses into domain entities.
- */
-export class SubscriptionService {
-    /**
-     * Construct a SubscriptionService instance.
-     *
-     * Initializes a SubscriptionManagementApi to handle all HTTP requests
-     * related to subscription management (create, read, update, delete).
-     * This isolates the API logic from domain logic and maintains
-     * a clean separation of concerns.
-     */
-    constructor() {
-        this.api = new SubscriptionManagementApi()
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import { SubscriptionApi } from "../infrastructure/subscription-api.js";
+import { SubscriptionAssembler } from "../infrastructure/subscription.assembler.js";
+import { SubscriptionPlanAssembler } from "../infrastructure/subscription-plan.assembler.js";
+import useIamStore from "../../iam/application/iam.service.js";
+
+const subscriptionApi = new SubscriptionApi();
+
+const useSubscriptionStore = defineStore("subscriptionStore", () => {
+  const subscriptions = ref([]);
+  const plans = ref([]);
+  const errors = ref([]);
+  const subscriptionsLoaded = ref(false);
+  const plansLoaded = ref(false);
+
+  const iamStore = useIamStore();
+
+  // Obtener suscripción del usuario actual
+  const currentUserSubscription = computed(() => {
+    if (!iamStore.currentUser) return null;
+    return subscriptions.value.find(sub => 
+      sub.userId === iamStore.currentUser.id && sub.isActive
+    );
+  });
+
+  // Obtener plan actual del usuario
+  const currentPlan = computed(() => {
+    const subscription = currentUserSubscription.value;
+    if (!subscription) return null;
+    return plans.value.find(p => p.name === subscription.planType);
+  });
+
+  // Obtener límites actuales del usuario
+  const currentLimits = computed(() => {
+    const subscription = currentUserSubscription.value;
+    if (!subscription) {
+      // Plan Free por defecto
+      return { maxMembers: 3, maxInventoryItems: 50 };
     }
-    /**
-     * Retrieve all subscriptions.
-     * @returns {Promise<Array>} A promise that resolves to a list of subscription entities.
-     */
-    listAll() {
-        return this.api.getAll()
-            .then(response => SubscriptionAssembler.toEntitiesFromResponse(response))
+    return {
+      maxMembers: subscription.maxMembers,
+      maxInventoryItems: subscription.maxInventoryItems
+    };
+  });
+
+  // Verificar si puede agregar más miembros
+  function canAddMembers(currentMemberCount) {
+    const limits = currentLimits.value;
+    if (limits.maxMembers === -1) return true; // Ilimitado
+    return currentMemberCount < limits.maxMembers;
+  }
+
+  // Verificar si puede agregar más items
+  function canAddInventoryItems(currentItemCount) {
+    const limits = currentLimits.value;
+    if (limits.maxInventoryItems === -1) return true; // Ilimitado
+    return currentItemCount < limits.maxInventoryItems;
+  }
+
+  async function fetchSubscriptions() {
+    try {
+      const response = await subscriptionApi.getSubscriptions();
+      subscriptions.value = SubscriptionAssembler.toEntityFromResponse(response);
+      subscriptionsLoaded.value = true;
+    } catch (e) {
+      console.error("Error fetching subscriptions:", e);
+      errors.value.push(e);
+      subscriptionsLoaded.value = true;
     }
-    /**
-     * Retrieve a subscription by its unique identifier.
-     * @param {number|string} id - Subscription identifier.
-     * @returns {Promise<Object>} A promise that resolves to a subscription entity.
-     * @throws {Error} If the subscription is not found.
-     */
-    getById(id) {
-        return this.api.getById(id)
-            .then(response => {
-                if (response.status !== 200) throw new Error('Not found')
-                return SubscriptionAssembler.toEntityFromResource(response.data)
-            })
+  }
+
+  async function fetchPlans() {
+    try {
+      const response = await subscriptionApi.getPlans();
+      plans.value = SubscriptionPlanAssembler.toEntityFromResponse(response);
+      plansLoaded.value = true;
+    } catch (e) {
+      console.error("Error fetching plans:", e);
+      errors.value.push(e);
+      plansLoaded.value = true;
     }
-    /**
-     * Create a new subscription using the provided command object.
-     *
-     * @param {Object} command - Data required to create a subscription.
-     * @param {string|number} command.userId - ID of the user subscribing.
-     * @param {string} command.plan - Plan name or identifier.
-     * @param {Date} command.startDate - Start date of the subscription.
-     * @param {string} command.status - Current status (e.g., ACTIVE, PENDING).
-     * @param {Date} [command.trialEndDate] - Optional trial end date.
-     * @returns {Promise<Object>} The created subscription entity.
-     */
-    create(command) {
-        const payload = {
-            userId: command.userId,
-            plan: command.plan,
-            startDate: command.startDate.toISOString(),
-            status: command.status,
-            trialEndDate: command.trialEndDate?.toISOString()
+  }
+
+  async function changePlan(planName) {
+    if (!iamStore.currentUser) {
+      throw new Error("No user logged in");
+    }
+
+    const plan = plans.value.find(p => p.name === planName);
+    if (!plan) {
+      throw new Error("Plan not found");
+    }
+
+    try {
+      // Desactivar suscripción actual si existe
+      const currentSub = currentUserSubscription.value;
+      if (currentSub) {
+        currentSub.isActive = false;
+        currentSub.endDate = new Date().toISOString();
+        await subscriptionApi.updateSubscription(currentSub);
+        
+        // Actualizar en el array local
+        const index = subscriptions.value.findIndex(s => s.id === currentSub.id);
+        if (index !== -1) {
+          subscriptions.value[index] = currentSub;
         }
-        return this.api.create(payload)
-            .then(response => SubscriptionAssembler.toEntityFromResource(response.data))
+      }
+
+      // Crear nueva suscripción
+      const newSubscription = {
+        userId: iamStore.currentUser.id,
+        planType: plan.name,
+        startDate: new Date().toISOString(),
+        endDate: null,
+        maxMembers: plan.maxMembers,
+        maxInventoryItems: plan.maxInventoryItems,
+        isActive: true
+      };
+
+      const response = await subscriptionApi.createSubscription(newSubscription);
+      const createdSub = SubscriptionAssembler.toEntityFromResource(response.data);
+      subscriptions.value.push(createdSub);
+
+      return createdSub;
+    } catch (e) {
+      console.error("Error changing plan:", e);
+      errors.value.push(e);
+      throw e;
     }
-    /**
-     * Update an existing subscription.
-     *
-     * @param {Object} command - Data required to update a subscription.
-     * @param {number|string} command.id - Subscription identifier.
-     * @param {string|number} command.userId - ID of the user.
-     * @param {string} command.plan - Plan name or identifier.
-     * @param {Date} command.startDate - Updated start date.
-     * @param {string} command.status - Updated status.
-     * @param {Date} [command.trialEndDate] - Optional trial end date.
-     * @returns {Promise<Object>} The updated subscription entity.
-     */
-    update(command) {
-        const payload = {
-            id: command.id,
-            userId: command.userId,
-            plan: command.plan,
-            startDate: command.startDate.toISOString(),
-            status: command.status,
-            trialEndDate: command.trialEndDate?.toISOString()
-        }
-        return this.api.update(payload)
-            .then(response => SubscriptionAssembler.toEntityFromResource(response.data))
+  }
+
+  async function initializeDefaultSubscription(userId) {
+    try {
+      // Verificar si ya tiene suscripción
+      const existingSub = subscriptions.value.find(
+        sub => sub.userId === userId && sub.isActive
+      );
+      
+      if (existingSub) {
+        return existingSub;
+      }
+
+      // Crear suscripción Free por defecto
+      const freePlan = plans.value.find(p => p.name === 'Free');
+      if (!freePlan) {
+        throw new Error("Free plan not found");
+      }
+
+      const newSubscription = {
+        userId: userId,
+        planType: 'Free',
+        startDate: new Date().toISOString(),
+        endDate: null,
+        maxMembers: freePlan.maxMembers,
+        maxInventoryItems: freePlan.maxInventoryItems,
+        isActive: true
+      };
+
+      const response = await subscriptionApi.createSubscription(newSubscription);
+      const createdSub = SubscriptionAssembler.toEntityFromResource(response.data);
+      subscriptions.value.push(createdSub);
+
+      return createdSub;
+    } catch (e) {
+      console.error("Error initializing default subscription:", e);
+      errors.value.push(e);
+      throw e;
     }
-    /**
-     * Cancel an active subscription.
-     *
-     * Fetches the subscription by ID, sets its status to "CANCELLED",
-     * and then performs an update operation.
-     *
-     * @param {number|string} id - Subscription identifier.
-     * @returns {Promise<Object>} The cancelled subscription entity.
-     */
-    cancel(id) {
-        return this.getById(id)
-            .then(sub => {
-                sub.status = 'CANCELLED'
-                return this.update(sub)
-            })
-    }
-    /**
-     * Delete a subscription permanently.
-     *
-     * @param {number|string} id - Subscription identifier.
-     * @returns {Promise<Object>} API response from the delete operation.
-     */
-    delete(id) {
-        return this.api.delete(id)
-    }
-}
+  }
+
+  return {
+    subscriptions,
+    plans,
+    errors,
+    subscriptionsLoaded,
+    plansLoaded,
+    currentUserSubscription,
+    currentPlan,
+    currentLimits,
+    canAddMembers,
+    canAddInventoryItems,
+    fetchSubscriptions,
+    fetchPlans,
+    changePlan,
+    initializeDefaultSubscription
+  };
+});
+
+export default useSubscriptionStore;

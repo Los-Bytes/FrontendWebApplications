@@ -1,7 +1,7 @@
 <script setup>
   import {useI18n} from "vue-i18n";
   import {useRoute, useRouter} from "vue-router";
-  import useLaboratoryMngmtStore from "../../application/laboratoryMngmt.store.js";
+  import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
 
   import {computed, onMounted, ref} from "vue";
   import {LabResponsible} from "../../domain/model/labResponsible.js";

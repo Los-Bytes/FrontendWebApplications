@@ -1,15 +1,15 @@
 <script setup>
 import { onMounted, onActivated, computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import useInventoryStore from "../../application/inventory.store.js";
-import useLaboratoryMngmtStore from "../../../laboratory/application/laboratoryMngmt.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
+import useInventoryStore from "../../application/inventory.service.js";
+import useLaboratoryMngmtStore from "../../../laboratory/application/laboratory.service.js";
+import useIamStore from "../../../iam/application/iam.service.js";
 
 const router = useRouter();
 const route = useRoute();
 const store = useInventoryStore();
 const labStore = useLaboratoryMngmtStore();
-const authStore = useAuthStore();
+const iamStore = useIamStore();
 
 const { itemsLoaded, fetchItems, markAsSold, markAsUsed, markAsReturned, deleteItem } = store;
 
@@ -36,9 +36,9 @@ const selectedItem = ref(null);
 const quantityToProcess = ref(0);
 
 async function loadData() {
-  if (!authStore.isAuthenticated) {
+  if (!iamStore.isSignedIn) {
     alert("Please login first");
-    router.push({ name: 'users-list' });
+    router.push({ name: 'iam-sign-in' });
     return;
   }
 

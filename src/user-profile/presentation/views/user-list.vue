@@ -3,15 +3,15 @@
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
 import {useConfirm} from "primevue";
-import useUserProfileStore from "../../application/user-profile.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
+import useUserProfileStore from "../../application/user-profile.service.js";
+import useIamStore from "../../../iam/application/iam.service.js";
 import {onMounted} from "vue";
 
 const {t}=useI18n();
 const router = useRouter();
 const confirm = useConfirm();
 const store = useUserProfileStore();
-const authStore = useAuthStore();
+const iamStore = useIamStore();
 const {users, usersLoaded, errors, fetchUsers, deleteUser}=store;
 
 onMounted(()=>{
@@ -38,8 +38,8 @@ const confirmDelete = (user) => {
 };
 
 function loginAsUser(user) {
-  authStore.login(user);
-  alert(`Logged in as: ${user.userName}`);
+  iamStore.login(user);
+  alert(`Logged in as: ${user.username}`);
   router.push({ name: "laboratoryMngmt-laboratories" });
 }
 
@@ -49,9 +49,9 @@ function loginAsUser(user) {
   <div class="p-4 users-page">
     <h1>Users</h1>
 
-    <div v-if="authStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
-      <strong>Current User:</strong> {{ authStore.currentUser.userName }} ({{ authStore.currentUser.fullName }})
-      <pv-button label="Logout" severity="secondary" size="small" @click="authStore.logout()" class="ml-3" />
+    <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
+      <strong>Current User:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
+      <pv-button label="Logout" severity="secondary" size="small" @click="iamStore.logout()" class="ml-3" />
     </div>
 
     <div class="actions-row mb-3">

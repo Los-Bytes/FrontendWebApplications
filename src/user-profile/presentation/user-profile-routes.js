@@ -1,5 +1,3 @@
-
-
 const  userForm = () => import('./views/user-form.vue');
 const  userList = () => import('./views/user-list.vue');
 

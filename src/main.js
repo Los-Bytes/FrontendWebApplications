@@ -49,6 +49,7 @@ createApp(App)
     .use(pinia)
     .mount('#app')
 
-import useAuthStore from '../src/iam/application/auth.store.js';
-const authStore = useAuthStore();
-authStore.loadUserFromStorage();
+
+import useIamStore from './iam/application/iam.service.js';
+const iamStore = useIamStore();
+iamStore.loadUserFromStorage();

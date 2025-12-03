@@ -3,7 +3,7 @@
   import {useRouter} from "vue-router";
   import {useConfirm} from "primevue";
   import {onMounted} from "vue";
-  import useLaboratoryMngmtStore from "../../application/laboratoryMngmt.store.js";
+  import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
 
   const {t}=useI18n();
   const router = useRouter();

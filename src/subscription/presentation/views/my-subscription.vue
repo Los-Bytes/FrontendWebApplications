@@ -5,7 +5,9 @@ import useSubscriptionStore from "../../application/subscription.service.js";
 import useIamStore from "../../../iam/application/iam.service.js";
 import useLaboratoryMngmtStore from "../../../laboratory/application/laboratory.service.js";
 import useInventoryStore from "../../../inventory/application/inventory.service.js";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const router = useRouter();
 const subscriptionStore = useSubscriptionStore();
 const iamStore = useIamStore();
@@ -36,10 +38,13 @@ onMounted(async () => {
     await labStore.fetchLaboratories();
   }
 
-  // ✅ CARGAR inventario para contar items
-  if (!inventoryStore.itemsLoaded.value) {
-    await inventoryStore.fetchItems();
-  }
+  // ✅ CARGAR inventario SIN filtrar por laboratorio (para obtener todos los items del usuario)
+  await inventoryStore.fetchItems(); // Sin parámetro = obtiene todos
+  
+  console.log('📊 Datos cargados:');
+  console.log('   - Laboratorios:', labStore.userLaboratories.length); // ✅ SIN .value porque es computed
+  console.log('   - Items totales:', inventoryStore.items.length);
+  console.log('   - Usuario actual:', iamStore.currentUser);
 });
 
 const planColor = computed(() => {
@@ -53,7 +58,11 @@ const planColor = computed(() => {
 });
 
 const usageStats = computed(() => {
-  const userLabs = labStore.userLaboratories.value || [];
+  const userLabs = labStore.userLaboratories || []; // ✅ SIN .value porque es computed
+  
+  console.log('🔄 Calculando estadísticas...');
+  console.log('   - Laboratorios del usuario:', userLabs.length);
+  console.log('   - Items en store:', inventoryStore.items?.length || 0);
   
   // ✅ Calcular total de miembros únicos across all labs del usuario
   const allMembers = new Set();
@@ -67,9 +76,15 @@ const usageStats = computed(() => {
   // ✅ Calcular total de items del usuario
   let totalItems = 0;
   userLabs.forEach(lab => {
-    const labItems = inventoryStore.items.filter(item => item.laboratoryId === lab.id);
+    // Asegurarse de que inventoryStore.items existe y es un array
+    const allItems = inventoryStore.items || [];
+    const labItems = allItems.filter(item => item.laboratoryId === lab.id);
+    console.log(`   - Items en lab ${lab.id} (${lab.name}):`, labItems.length);
     totalItems += labItems.length;
   });
+
+  console.log('   - Total items calculado:', totalItems);
+  console.log('   - Total miembros únicos:', allMembers.size);
 
   // ✅ Promedio de items por laboratorio
   const avgItemsPerLab = userLabs.length > 0 ? Math.round(totalItems / userLabs.length) : 0;
@@ -112,9 +127,9 @@ function navigateToPlans() {
 <template>
   <div class="p-4 my-subscription-container">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-bold">Mi Suscripción</h1>
+      <h1 class="text-3xl font-bold">{{ t('subscription.db-title') }}</h1>
       <pv-button 
-        label="Ver Planes" 
+        :label="t('subscription.see-plans')" 
         icon="pi pi-th-large"
         severity="secondary"
         @click="navigateToPlans"
@@ -140,7 +155,7 @@ function navigateToPlans() {
     <!-- Loading State -->
     <div v-if="!currentUserSubscription" class="p-6 bg-gray-100 rounded-lg text-center">
       <i class="pi pi-spin pi-spinner text-4xl text-blue-600"></i>
-      <p class="mt-3 text-lg">Cargando información de suscripción...</p>
+      <p class="mt-3 text-lg">{{ t('subscription.loading') }}</p>
     </div>
 
     <!-- Subscription Details -->
@@ -150,7 +165,7 @@ function navigateToPlans() {
       <div class="detail-card p-5 mb-6 rounded-lg shadow-xl bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300">
         <h2 class="text-2xl font-bold mb-4 flex items-center">
           <i class="pi pi-star-fill text-yellow-500 mr-2"></i>
-          Plan Actual
+          {{ t('subscription.current-plan') }}
         </h2>
         
         <div class="flex items-center justify-between mb-4">
@@ -165,7 +180,7 @@ function navigateToPlans() {
             </p>
           </div>
           <pv-button 
-            label="Cambiar Plan" 
+            :label="t('subscription.change-plan')" 
             icon="pi pi-arrow-right"
             size="large"
             @click="navigateToPlans"
@@ -174,13 +189,13 @@ function navigateToPlans() {
 
         <div class="grid grid-cols-2 gap-4 mt-4">
           <div class="info-item bg-white p-3 rounded shadow">
-            <span class="label text-gray-600">Fecha de inicio:</span>
-            <span class="value text-lg font-semibold text-gray-600">{{ formatDate(currentUserSubscription.startDate) }}</span>
+            <span class="label text-gray-600">{{ t('subscription.start-date') }}:</span>
+            <span class="value text-lg font-semibold text-gray-800">{{ formatDate(currentUserSubscription.startDate) }}</span>
           </div>
           <div class="info-item bg-white p-3 rounded shadow">
-            <span class="label text-gray-600">Estado:</span>
+            <span class="label text-gray-600">{{ t('subscription.status') }}:</span>
             <pv-tag 
-              :value="currentUserSubscription.isActive ? 'Activo' : 'Inactivo'" 
+              :value="currentUserSubscription.isActive ? t('subscription.active') : t('subscription.inactive')" 
               :severity="currentUserSubscription.isActive ? 'success' : 'danger'"
             />
           </div>
@@ -189,9 +204,9 @@ function navigateToPlans() {
 
       <!-- Limits and Usage Card -->
       <div class="detail-card p-5 mb-6 rounded-lg shadow-xl bg-white border-2 border-gray-200">
-        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-600">
+        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-800">
           <i class="pi pi-chart-bar text-blue-600 mr-2"></i>
-          Límites y Uso
+          {{ t('subscription.limits-usage') }}
         </h2>
         
         <div class="limits-grid">
@@ -201,37 +216,37 @@ function navigateToPlans() {
               <i class="pi pi-users text-3xl text-blue-600"></i>
               <pv-tag 
                 v-if="currentLimits.maxMembers === -1"
-                value="Ilimitado"
+                :value="t('subscription.unlimited')"
                 severity="success"
               />
             </div>
-            <p class="label text-gray-600 mb-2">Miembros por Laboratorio</p>
+            <p class="label text-gray-600 mb-2">{{ t('subscription.members') }}</p>
             <p class="value text-3xl font-bold text-blue-600">
               <span v-if="currentLimits.maxMembers === -1">∞</span>
               <span v-else>{{ currentLimits.maxMembers }}</span>
             </p>
             <p v-if="currentLimits.maxMembers !== -1" class="text-sm text-gray-500 mt-2">
-              Promedio actual: {{ usageStats.avgMembersPerLab }}
+              {{ t('subscription.current-average') }}: {{ usageStats.avgMembersPerLab }}
             </p>
           </div>
 
           <!-- Inventory Items Limit -->
           <div class="limit-item p-4 bg-green-50 rounded-lg shadow">
-            <div class="flex items-center justify-between mb-3 ">
+            <div class="flex items-center justify-between mb-3">
               <i class="pi pi-box text-3xl text-green-600"></i>
               <pv-tag 
                 v-if="currentLimits.maxInventoryItems === -1"
-                value="Ilimitado"
+                :value="t('subscription.unlimited')"
                 severity="success"
               />
             </div>
-            <p class="label text-gray-600 mb-2">Items por Inventario</p>
+            <p class="label text-gray-600 mb-2">{{ t('subscription.items') }}</p>
             <p class="value text-3xl font-bold text-green-600">
               <span v-if="currentLimits.maxInventoryItems === -1">∞</span>
               <span v-else>{{ currentLimits.maxInventoryItems }}</span>
             </p>
             <p v-if="currentLimits.maxInventoryItems !== -1" class="text-sm text-gray-500 mt-2">
-              Promedio actual: {{ usageStats.avgItemsPerLab }}
+              {{ t('subscription.current-average') }}: {{ usageStats.avgItemsPerLab }}
             </p>
           </div>
         </div>
@@ -239,33 +254,33 @@ function navigateToPlans() {
 
       <!-- Usage Statistics -->
       <div class="detail-card p-5 mb-6 rounded-lg shadow-xl bg-white border-2 border-gray-200">
-        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-600">
+        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-800">
           <i class="pi pi-chart-line text-purple-600 mr-2"></i>
-          Estadísticas de Uso
+          {{ t('subscription.usage-stats') }}
         </h2>
         
         <div class="stats-grid">
           <div class="stat-card p-4 bg-purple-50 rounded-lg text-center">
             <i class="pi pi-building text-4xl text-purple-600 mb-2"></i>
-            <p class="text-sm text-gray-600">Laboratorios</p>
+            <p class="text-sm text-gray-600">{{ t('subscription.laboratories') }}</p>
             <p class="text-3xl font-bold text-purple-600">{{ usageStats.totalLaboratories }}</p>
           </div>
 
           <div class="stat-card p-4 bg-blue-50 rounded-lg text-center">
             <i class="pi pi-users text-4xl text-blue-600 mb-2"></i>
-            <p class="text-sm text-gray-600">Miembros Totales</p>
+            <p class="text-sm text-gray-600">{{ t('subscription.total-members') }}</p>
             <p class="text-3xl font-bold text-blue-600">{{ usageStats.totalMembers }}</p>
           </div>
 
           <div class="stat-card p-4 bg-green-50 rounded-lg text-center">
             <i class="pi pi-box text-4xl text-green-600 mb-2"></i>
-            <p class="text-sm text-gray-600">Items Totales</p>
+            <p class="text-sm text-gray-600">{{ t('subscription.total-items') }}</p>
             <p class="text-3xl font-bold text-green-600">{{ usageStats.totalItems }}</p>
           </div>
 
           <div class="stat-card p-4 bg-orange-50 rounded-lg text-center">
             <i class="pi pi-chart-pie text-4xl text-orange-600 mb-2"></i>
-            <p class="text-sm text-gray-600">Promedio Items/Lab</p>
+            <p class="text-sm text-gray-600">{{ t('subscription.average-items') }}</p>
             <p class="text-3xl font-bold text-orange-600">{{ usageStats.avgItemsPerLab }}</p>
           </div>
         </div>
@@ -273,9 +288,9 @@ function navigateToPlans() {
 
       <!-- Features Included -->
       <div v-if="currentPlan" class="detail-card p-5 mb-6 rounded-lg shadow-xl bg-white border-2 border-gray-200">
-        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-600">
+        <h2 class="text-2xl font-bold mb-4 flex items-center text-gray-800">
           <i class="pi pi-check-square text-green-600 mr-2"></i>
-          Características Incluidas
+          {{ t('subscription.features-included') }}
         </h2>
         
         <ul class="features-list space-y-3">
@@ -294,13 +309,13 @@ function navigateToPlans() {
       <div v-if="currentUserSubscription.planType !== 'Max'" class="detail-card p-5 rounded-lg shadow-xl bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300">
         <h3 class="font-bold mb-3 text-xl flex items-center">
           <i class="pi pi-bolt text-yellow-600 mr-2"></i> 
-          ¿Necesitas más?
+          {{ t('subscription.need-more') }}
         </h3>
         <p class="mb-4">
-          Mejora tu plan para obtener más miembros, más items en inventario y características avanzadas.
+          {{ t('subscription.upgrade-message') }}
         </p>
         <pv-button 
-          label="Ver Planes Disponibles" 
+          :label="t('subscription.view-available')" 
           icon="pi pi-arrow-right"
           severity="warning"
           @click="navigateToPlans"

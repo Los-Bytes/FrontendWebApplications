@@ -78,13 +78,13 @@ const useInventoryStore = defineStore("inventoryStore", () => {
 
       console.log("All items:", allItems);
 
-      // Filtrar por laboratorio si se proporciona
-      if (laboratoryId) {
-        items.value = allItems.filter(item => item.laboratoryId === laboratoryId);
-        console.log(`Items filtrados para lab ${laboratoryId}:`, items.value);
-      } else {
-        items.value = allItems;
-      }
+      if (laboratoryId !== null && laboratoryId !== undefined) {
+      items.value = allItems.filter(item => item.laboratoryId === laboratoryId);
+      console.log(`Items filtrados para lab ${laboratoryId}:`, items.value);
+    } else {
+      items.value = allItems;
+      console.log(`Items sin filtrar (todos):`, items.value.length);
+    }
       
       itemsLoaded.value = true;
       console.log("Items cargados correctamente. Total:", items.value.length);

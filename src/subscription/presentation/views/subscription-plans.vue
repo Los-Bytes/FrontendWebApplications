@@ -3,7 +3,9 @@ import { onMounted, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import useSubscriptionStore from "../../application/subscription.service.js";
 import useIamStore from "../../../iam/application/iam.service.js";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const router = useRouter();
 const subscriptionStore = useSubscriptionStore();
 const iamStore = useIamStore();
@@ -94,9 +96,9 @@ function navigateToMySubscription() {
 <template>
   <div class="p-4 subscription-plans-container">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-bold">Planes de Suscripción</h1>
+      <h1 class="text-3xl font-bold">{{ t('subscription.plan-title') }}</h1>
       <pv-button 
-        label="Mi Suscripción" 
+        :label="t('subscription.my-dashboard')" 
         icon="pi pi-user"
         severity="secondary"
         @click="navigateToMySubscription"
@@ -108,11 +110,11 @@ function navigateToMySubscription() {
       <div class="flex items-center justify-between">
         <div>
           <p class="text-lg">
-            <strong>Usuario:</strong> {{ iamStore.currentUser.username }} 
+            <strong>{{ t('subscription.user') }}:</strong> {{ iamStore.currentUser.username }} 
             <span class="text-gray-600">({{ iamStore.currentUser.fullName }})</span>
           </p>
           <p class="mt-1">
-            <strong>Plan Actual:</strong> 
+            <strong>{{ t('subscription.current-plan') }}:</strong> 
             <pv-tag 
               :value="currentPlanName" 
               :severity="getPlanButtonSeverity(currentPlanName)"
@@ -127,7 +129,7 @@ function navigateToMySubscription() {
     <!-- Loading State -->
     <div v-if="!plansLoaded" class="p-6 bg-gray-100 rounded-lg text-center">
       <i class="pi pi-spin pi-spinner text-4xl text-blue-600"></i>
-      <p class="mt-3 text-lg">Cargando planes...</p>
+      <p class="mt-3 text-lg">{{ t('subscription.loading-plans') }}</p>
     </div>
 
     <!-- Plans Grid -->
@@ -143,7 +145,7 @@ function navigateToMySubscription() {
             <h2 class="text-3xl font-bold">{{ plan.name }}</h2>
             <pv-tag 
               v-if="plan.name === currentPlanName"
-              value="ACTIVO" 
+              :value="t('subscription.active')" 
               severity="success"
               icon="pi pi-check-circle"
             />
@@ -151,13 +153,13 @@ function navigateToMySubscription() {
           
           <div class="price mt-3">
             <span v-if="plan.price === 0" class="text-4xl font-bold text-gray-700">
-              Gratis
+              {{ t('subscription.free') }}
             </span>
             <span v-else class="text-4xl font-bold text-gray-900">
               ${{ plan.price.toFixed(2) }}
             </span>
             <span v-if="plan.price > 0" class="text-lg text-gray-600 ml-2">
-              / {{ plan.period === 'monthly' ? 'mes' : 'año' }}
+              / {{ plan.period === 'monthly' ? t('subscription.monthly') : t('subscription.yearly') }}
             </span>
           </div>
         </div>
@@ -166,21 +168,21 @@ function navigateToMySubscription() {
         <div class="plan-limits mb-4 p-4 bg-white rounded-lg shadow-sm">
           <p class="font-bold mb-3 text-lg text-gray-500 flex items-center">
             <i class="pi pi-shield mr-2 text-blue-600"></i>
-            Límites:
+            {{ t('subscription.limits') }}:
           </p>
           <ul class="space-y-2">
             <li class="flex items-center">
               <i class="pi pi-users text-blue-600 mr-3"></i>
               <span class="font-medium">
-                <span v-if="plan.maxMembers === -1" class="text-purple-600">Miembros ilimitados</span>
-                <span v-else class="text-gray-600">Hasta {{ plan.maxMembers }} miembros</span>
+                <span v-if="plan.maxMembers === -1" class="text-purple-600">{{ t('subscription.unlimited-members') }}</span>
+                <span v-else class="text-gray-600">{{ t('subscription.up-to') }} {{ plan.maxMembers }} {{ t('subscription.memb') }}</span>
               </span>
             </li>
             <li class="flex items-center">
               <i class="pi pi-box text-green-600 mr-3"></i>
               <span class="font-medium">
-                <span v-if="plan.maxInventoryItems === -1" class="text-purple-600">Items ilimitados</span>
-                <span v-else class="text-gray-600">Hasta {{ plan.maxInventoryItems }} items</span>
+                <span v-if="plan.maxInventoryItems === -1" class="text-purple-600">{{ t('subscription.unlimited-items') }}</span>
+                <span v-else class="text-gray-600">{{ t('subscription.up-to') }} {{ plan.maxInventoryItems }} {{ t('subscription.itms') }}</span>
               </span>
             </li>
           </ul>
@@ -190,7 +192,7 @@ function navigateToMySubscription() {
         <div class="plan-features mb-5">
           <p class="font-bold mb-3 text-lg flex items-center">
             <i class="pi pi-star mr-2 text-yellow-500"></i>
-            Características:
+            {{ t('subscription.features') }}:
           </p>
           <ul class="space-y-3">
             <li 
@@ -208,7 +210,7 @@ function navigateToMySubscription() {
         <div class="plan-action">
           <pv-button 
             v-if="plan.name === currentPlanName"
-            label="Plan Actual"
+            :label="t('subscription.actual-plan')"
             :severity="getPlanButtonSeverity(plan.name)"
             class="w-full"
             icon="pi pi-check"
@@ -216,7 +218,7 @@ function navigateToMySubscription() {
           />
           <pv-button 
             v-else
-            :label="plan.price === 0 ? 'Cambiar a Free' : `Obtener ${plan.name}`"
+            :label="plan.price === 0 ? t('subscription.change-free') : `${t('subscription.obtain')} ${plan.name}`"
             :severity="getPlanButtonSeverity(plan.name)"
             class="w-full"
             icon="pi pi-arrow-right"
@@ -231,28 +233,28 @@ function navigateToMySubscription() {
     <div class="mt-8 p-5 bg-yellow-300 rounded-lg border-2 border-yellow-50">
       <h3 class="font-bold mb-3 text-xl flex items-center">
         <i class="pi pi-info-circle text-yellow-600 mr-2"></i> 
-        Información importante
+        {{ t('subscription.important-information') }}
       </h3>
       <ul class="space-y-2 text-gray-700">
         <li class="flex items-start">
           <i class="pi pi-angle-right mr-2 mt-1"></i>
-          <span>Los límites de miembros aplican <strong>por laboratorio</strong></span>
+          <span>{{ t('subscription.text-1') }} <strong>{{ t('subscription.text-1-strong') }}</strong></span>
         </li>
         <li class="flex items-start">
           <i class="pi pi-angle-right mr-2 mt-1"></i>
-          <span>Los límites de items aplican <strong>por laboratorio</strong></span>
+          <span>{{ t('subscription.text-2') }} <strong>{{ t('subscription.text-2-strong') }}</strong></span>
         </li>
         <li class="flex items-start">
           <i class="pi pi-angle-right mr-2 mt-1"></i>
-          <span>Puedes <strong>cambiar de plan en cualquier momento</strong></span>
+          <span>{{ t('subscription.text-3') }} <strong>{{ t('subscription.text-3-strong') }}</strong></span>
         </li>
         <li class="flex items-start">
           <i class="pi pi-angle-right mr-2 mt-1"></i>
-          <span>Al cambiar a un plan inferior, los datos existentes se mantienen pero no podrás agregar más hasta estar dentro del límite</span>
+          <span>{{ t('subscription.text-4') }}</span>
         </li>
         <li class="flex items-start">
           <i class="pi pi-angle-right mr-2 mt-1"></i>
-          <span>Los cambios de plan son <strong>inmediatos</strong></span>
+          <span>{{ t('subscription.text-5') }} <strong>{{ t('subscription.text-5-strong') }}</strong></span>
         </li>
       </ul>
     </div>

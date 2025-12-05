@@ -22,66 +22,46 @@ const { t } = useI18n();
 </template>
 
 <style scoped>
-
 .footer-content {
   width: 100%;
-  background: transparent !important;
-  color: var(--text-on-dark);
+  color: var(--text-color-secondary);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
   padding: 0.25rem 0;
-  box-sizing: border-box;
   text-align: center;
 }
 
-
 .footer-row {
-  width: 100%;
-  max-width: var(--container-max-width);
-  padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-
 .footer-text {
   margin: 0;
-  color: var(--text-on-dark);
-  font-size: 0.95rem;
-  line-height: 1.45;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
-
 
 .footer-link {
-  color: var(--secondary-green);
-  text-decoration: underline;
+  color: var(--primary-color);
+  text-decoration: none;
   font-weight: 600;
-  margin: 0 .15rem;
+  margin: 0 0.25rem;
+  transition: color 0.2s;
 }
 
-
-.footer-content :deep(.pi-heart) {
-  color: var(--secondary-green);
-  margin: 0 .3rem;
+.footer-link:hover {
+  text-decoration: underline;
+  color: var(--primary-color-text);
 }
 
-
-.footer-content :deep(.bg-primary),
-.footer-content :deep(.p-card),
-.footer-content :deep(.p-panel),
-.footer-content :deep(.surface) {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-
-@media (max-width: 520px) {
-  .footer-text { font-size: 0.9rem; }
-  .footer-row { padding: 0 .6rem; }
+.text-red-500 {
+    color: var(--red-500, #ef4444);
+    margin: 0 0.25rem;
 }
 </style>

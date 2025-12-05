@@ -19,7 +19,11 @@ import {
     Textarea,
     Toast, ToastService,
     Toolbar, Tag,
-    Dialog
+    Dialog,
+    Card,
+    Message,
+    Divider,
+    DatePicker
 } from "primevue";
 import router from "./router.js";
 import pinia from "./pinia.js";
@@ -45,6 +49,10 @@ createApp(App)
     .component('pv-column', Column)
     .component('pv-tag', Tag)
     .component('pv-dialog', Dialog)
+    .component('pv-card', Card)
+    .component('pv-message', Message)
+    .component('pv-divider', Divider)
+    .component('pv-date-picker', DatePicker)
     .use(router)
     .use(pinia)
     .mount('#app')

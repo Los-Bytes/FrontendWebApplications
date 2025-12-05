@@ -9,6 +9,16 @@ import express from 'express';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const distPath = join(__dirname, '../dist');
+console.log('='.repeat(60));
+console.log('🔍 VERIFICANDO CARPETA DIST');
+console.log('Ruta esperada:', distPath);
+console.log('¿Existe dist?:', existsSync(distPath));
+if (existsSync(distPath)) {
+    console.log('Archivos en dist:', readdirSync(distPath));
+}
+console.log('='.repeat(60));
+
 const server = jsonServer.create();
 const router = jsonServer.router(join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();

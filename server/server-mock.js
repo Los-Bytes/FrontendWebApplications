@@ -1,27 +1,36 @@
 // server/server-mock.js
-// Mock server para IAM authentication con json-server (ES Modules)
-
 import jsonServer from 'json-server';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import express from 'express';
+import { existsSync, readdirSync } from 'fs';
+import { cwd } from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const distPath = join(__dirname, '../dist');
+// Usar process.cwd() para obtener la raíz real del proyecto
+const projectRoot = cwd();
+const distPath = join(projectRoot, 'dist');
+
+// DEBUG
 console.log('='.repeat(60));
 console.log('🔍 VERIFICANDO CARPETA DIST');
-console.log('Ruta esperada:', distPath);
+console.log('Project root:', projectRoot);
+console.log('__dirname:', __dirname);
+console.log('Ruta dist:', distPath);
 console.log('¿Existe dist?:', existsSync(distPath));
 if (existsSync(distPath)) {
-    console.log('Archivos en dist:', readdirSync(distPath));
+    console.log('✅ Archivos en dist:', readdirSync(distPath));
 }
 console.log('='.repeat(60));
 
 const server = jsonServer.create();
 const router = jsonServer.router(join(__dirname, 'db.json'));
-const middlewares = jsonServer.defaults();
+
+// IMPORTANTE: Usar la ruta correcta desde la raíz del proyecto
+const middlewares = jsonServer.defaults({
+    static: distPath  // Usar distPath en lugar de ../dist
+});
 
 // Función para generar un token simple
 function generateToken(userId, username) {
@@ -33,12 +42,6 @@ function generateToken(userId, username) {
 // Middleware
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
-
-// ==========================================
-// SERVIR ARCHIVOS ESTÁTICOS DE VITE
-// ==========================================
-// Servir los archivos estáticos del build de Vite
-server.use(express.static(join(__dirname, '../dist')));
 
 // ==========================================
 // POST /api/v1/sign-in
@@ -55,7 +58,6 @@ server.post('/api/v1/sign-in', (req, res) => {
         });
     }
 
-    // Buscar usuario en db.json
     const db = router.db;
     const users = db.get('users').value();
     
@@ -72,7 +74,6 @@ server.post('/api/v1/sign-in', (req, res) => {
 
     console.log('✅ User found:', user.username);
 
-    // Verificar password
     if (user.password && user.password !== password) {
         console.log('❌ Invalid password');
         return res.status(401).json({ 
@@ -80,12 +81,10 @@ server.post('/api/v1/sign-in', (req, res) => {
         });
     }
 
-    // Generar token
     const token = generateToken(user.id, user.username);
 
     console.log('✅ Sign-in successful for:', user.username);
 
-    // Respuesta exitosa
     return res.status(200).json({
         id: user.id,
         username: user.username,
@@ -108,7 +107,6 @@ server.post('/api/v1/sign-up', (req, res) => {
     
     const { username, password, fullName, email, phone, role, organization } = req.body;
     
-    // Validaciones
     if (!username || !password || !fullName || !email) {
         console.log('❌ Missing required fields');
         return res.status(400).json({ 
@@ -122,7 +120,6 @@ server.post('/api/v1/sign-up', (req, res) => {
         
         console.log('👥 Current users count:', users.length);
         
-        // Verificar si el usuario ya existe
         const existingUser = users.find(u => 
             u.username === username || u.email === email
         );
@@ -134,16 +131,14 @@ server.post('/api/v1/sign-up', (req, res) => {
             });
         }
 
-        // Calcular nuevo ID
         const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
         
         console.log('🆕 Creating new user with ID:', newId);
 
-        // Crear nuevo usuario
         const newUser = {
             id: newId,
             username: username,
-            password: password, // En producción, hashearlo
+            password: password,
             fullName: fullName,
             email: email,
             phone: phone || '',
@@ -154,12 +149,10 @@ server.post('/api/v1/sign-up', (req, res) => {
             suscriptionPlan: 'Free'
         };
 
-        // Agregar usuario a la base de datos
         db.get('users').push(newUser).write();
 
         console.log('✅ User created successfully:', newUser.username);
 
-        // Crear suscripción Free por defecto
         try {
             const subscriptions = db.get('subscriptions').value();
             const newSubId = subscriptions.length > 0 
@@ -183,7 +176,6 @@ server.post('/api/v1/sign-up', (req, res) => {
             console.log('⚠️ Could not create subscription:', subError.message);
         }
 
-        // Respuesta exitosa
         return res.status(201).json({
             message: 'User registered successfully',
             id: newUser.id,
@@ -203,11 +195,12 @@ server.post('/api/v1/sign-up', (req, res) => {
 server.use('/api/v1', router);
 
 // ==========================================
-// SPA FALLBACK - DEBE IR AL FINAL
+// SPA FALLBACK
 // ==========================================
-// Para todas las rutas que no sean de API, servir index.html
 server.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../dist/index.html'));
+    const indexPath = join(distPath, 'index.html');
+    console.log('📄 Serving index.html from:', indexPath);
+    res.sendFile(indexPath);
 });
 
 // Iniciar servidor
@@ -222,9 +215,10 @@ server.listen(PORT, () => {
     console.log('   GET  http://localhost:' + PORT + '/api/v1/users');
     console.log('   GET  http://localhost:' + PORT + '/api/v1/plans');
     console.log('='.repeat(60));
+    console.log('📁 Serving static files from:', distPath);
+    console.log('='.repeat(60));
     console.log('');
     
-    // Mostrar estado de la base de datos
     const db = router.db;
     const users = db.get('users').value();
     console.log('📊 Database status:');

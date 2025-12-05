@@ -4,6 +4,7 @@
 import jsonServer from 'json-server';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import express from 'express';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,6 +23,12 @@ function generateToken(userId, username) {
 // Middleware
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
+
+// ==========================================
+// SERVIR ARCHIVOS ESTÁTICOS DE VITE
+// ==========================================
+// Servir los archivos estáticos del build de Vite
+server.use(express.static(join(__dirname, '../dist')));
 
 // ==========================================
 // POST /api/v1/sign-in
@@ -182,11 +189,19 @@ server.post('/api/v1/sign-up', (req, res) => {
     }
 });
 
-// Usar el router por defecto para todas las demás rutas
+// Usar el router por defecto para todas las demás rutas de API
 server.use('/api/v1', router);
 
+// ==========================================
+// SPA FALLBACK - DEBE IR AL FINAL
+// ==========================================
+// Para todas las rutas que no sean de API, servir index.html
+server.get('*', (req, res) => {
+    res.sendFile(join(__dirname, '../dist/index.html'));
+});
+
 // Iniciar servidor
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log('='.repeat(60));
     console.log('🚀 Mock Server running on http://localhost:' + PORT);

@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import useLaboratoryMngmtStore from "../../application/laboratoryMngmt.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
+import useAuthStore from "../../../iam/application/iam.store.js";
 
 import { computed, onMounted, ref } from "vue";
 import { Laboratory } from "../../domain/model/laboratory.js";
@@ -53,7 +53,7 @@ const saveLaboratory = async () => {
     capacity: form.value.capacity,
     registrationDate: new Date().toISOString(),
     labResponsibleId: form.value.labResponsibleId,
-    adminUserId: authStore.currentUser?.id,
+    adminUserId: authStore.currentUserId,
     memberUserIds: form.value.labResponsibleId ? [parseInt(form.value.labResponsibleId)] : []
   });
 
@@ -84,10 +84,11 @@ const navigateBack = () => {
       {{ isEdit ? "Edit Laboratory" : "New Laboratory" }}
     </h1>
 
-    <div v-if="authStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded border border-solid border-white">
-      <strong>Creating as:</strong> {{ authStore.currentUser.userName }} ({{ authStore.currentUser.fullName }})
-      <br>
-      <small>You will be the administrator of this laboratory</small>
+    <div v-if="authStore.isSignedIn" class="mb-4 p-3 border-round-md surface-card border-1 surface-border flex flex-column gap-2 shadow-1">
+      <span class="text-700">
+        <strong>Creating as:</strong> {{ authStore.currentUsername }}
+      </span>
+      <small class="text-500">You will be the administrator of this laboratory</small>
     </div>
 
     <form @submit.prevent="saveLaboratory" class="form-grid">
@@ -139,10 +140,11 @@ const navigateBack = () => {
 
 <style scoped>
 .laboratory-form {
-  background: #51a2fd;
-  border-radius: 10px;
+  background: var(--surface-card);
+  border-radius: var(--border-radius);
   padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--surface-border);
 }
 
 .form-grid {

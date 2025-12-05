@@ -1,11 +1,11 @@
-import {IamApi} from "../infrastructure/iam-api.js";
-import {defineStore} from "pinia";
-import {computed, ref} from "vue";
-import {SignInAssembler} from "../infrastructure/sign-in.assembler.js";
-import {UserAssembler} from "../infrastructure/user.assembler.js";
-import {SignUpAssembler} from "../infrastructure/sign-up.assembler.js";
-import {SignInCommand} from "../domain/sign-in.command.js";
-import {SignUpCommand} from "../domain/sign-up.command.js";
+import { IamApi } from "../infrastructure/iam-api.js";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { SignInAssembler } from "../infrastructure/sign-in.assembler.js";
+import { UserAssembler } from "../infrastructure/user.assembler.js";
+import { SignUpAssembler } from "../infrastructure/sign-up.assembler.js";
+import { SignInCommand } from "../domain/sign-in.command.js";
+import { SignUpCommand } from "../domain/sign-up.command.js";
 
 const iamApi = new IamApi();
 /**
@@ -21,11 +21,11 @@ const useIamStore = defineStore('iam', () => {
     /** @type {import('vue').Ref<boolean>} Flag indicating if users have been loaded. */
     const usersLoaded = ref(false);
     /** @type {import('vue').Ref<boolean>} Flag indicating if a user is signed in. */
-    const isSignedIn = ref(false);
+    const isSignedIn = ref(!!localStorage.getItem('token'));
     /** @type {import('vue').Ref<string|null>} The currently signed-in user entity. */
-    const currentUsername = ref(null);
+    const currentUsername = ref(localStorage.getItem('username'));
     /** @type {import('vue').Ref<number|null>} The currently signed-in user entity. */
-    const currentUserId = ref(0);
+    const currentUserId = ref(Number(localStorage.getItem('userId')) || 0);
     /** @type {import('vue').ComputedRef<string|null>} The current authentication token. */
     const currentToken = computed(() => isSignedIn.value ? localStorage.getItem('token') : null);
 
@@ -48,15 +48,17 @@ const useIamStore = defineStore('iam', () => {
                     currentUsername.value = currentUser.username;
                     currentUserId.value = currentUser.id;
                     localStorage.setItem('token', signInResource.token);
+                    localStorage.setItem('username', currentUser.username);
+                    localStorage.setItem('userId', currentUser.id);
                     isSignedIn.value = true;
                     console.log(`User signed in: ${currentUsername.value}`);
                     errors.value = [];
-                    router.push({name: 'home'});
+                    router.push({ name: 'home' });
                 } else {
                     isSignedIn.value = false;
                     console.log('Sign-in failed');
                     errors.value.push(new Error('Sign-in failed'));
-                    router.push({name: 'iam-sign-in'});
+                    router.push({ name: 'iam-sign-in' });
                 }
 
             })
@@ -65,7 +67,7 @@ const useIamStore = defineStore('iam', () => {
                 currentUsername.value = error.name;
                 console.log(error);
                 errors.value.push(error);
-                router.push({name: 'iam-sign-in'});
+                router.push({ name: 'iam-sign-in' });
             });
     }
 
@@ -86,17 +88,17 @@ const useIamStore = defineStore('iam', () => {
                 if (signUpResource) {
                     console.log(signUpResource.message);
                     errors.value = [];
-                    router.push({name: 'iam-sign-in'});
+                    router.push({ name: 'iam-sign-in' });
                 } else {
                     console.log('Sign-up failed');
                     errors.value.push(new Error('Sign-up failed'));
-                    router.push({name: 'iam-sign-up'});
+                    router.push({ name: 'iam-sign-up' });
                 }
             })
             .catch(error => {
                 console.log(error);
                 errors.value.push(error);
-                router.push({name: 'iam-sign-up'});
+                router.push({ name: 'iam-sign-up' });
             });
     }
 
@@ -107,10 +109,12 @@ const useIamStore = defineStore('iam', () => {
         currentUsername.value = null;
         currentUserId.value = 0;
         localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userId');
         isSignedIn.value = false;
         console.log('User signed out');
         errors.value = [];
-        router.push({name: 'iam-sign-in'});
+        router.push({ name: 'iam-sign-in' });
     }
 
     /**

@@ -3,7 +3,7 @@ import { onMounted, onActivated, computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useInventoryStore from "../../application/inventory.store.js";
 import useLaboratoryMngmtStore from "../../../laboratory/application/laboratoryMngmt.store.js";
-import useAuthStore from "../../../iam/application/auth.store.js";
+import useAuthStore from "../../../iam/application/iam.store.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -36,7 +36,7 @@ const selectedItem = ref(null);
 const quantityToProcess = ref(0);
 
 async function loadData() {
-  if (!authStore.isAuthenticated) {
+  if (!authStore.isSignedIn) {
     alert("Please login first");
     router.push({ name: 'users-list' });
     return;
@@ -147,7 +147,7 @@ function navigateBack() {
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-2">Inventario de Laboratorio</h1>
     
-    <div v-if="currentLab" class="mb-4 p-3 bg-blue-400 rounded">
+    <div v-if="currentLab" class="mb-4 p-3 border-round-md surface-card border-1 surface-border shadow-1 text-700">
       <strong>Laboratorio:</strong> {{ currentLab.name }}
       <br>
       <strong>Dirección:</strong> {{ currentLab.address }}

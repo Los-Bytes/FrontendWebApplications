@@ -3,154 +3,182 @@ import { useI18n } from "vue-i18n";
 import FooterContent from "./footer-content.vue";
 import LanguageSwitcher from "./language-switcher.vue";
 
+import useAuthStore from "../../../iam/application/iam.store.js";
+import { useRouter } from "vue-router";
+
 const { t } = useI18n();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const items = [
   { label: "option.home", to: "/home" },
   { label: "option.about", to: "/about" },
   { label: "option.users", to: "/user-profile/users" },
   { label: "option.subscriptions", to: "/subscription/subscriptions" },
-  //{ label: "option.labResponsibles", to: "/laboratory/labResponsibles" },
   { label: "option.laboratories", to: "/laboratory/laboratories" },
-  //{ label: "option.inventory", to: "/inventory/inventory" }
 ];
 </script>
 
 <template>
-  <div class="header">
-    <pv-toolbar class="pv-toolbar toolbar">
-      <template #start>
-        <div class="toolbar-brand">
-          <img src="/logo-lab.png" alt="LabIoT" class="toolbar-logo" />
+  <div class="layout-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="container header-content">
+        <div class="brand">
+          <!-- Assuming logo is dark or colorful enough for white bg, otherwise might need text -->
+          <img src="/logo-lab.png" alt="LabIoT" class="logo" />
+          <span class="brand-name">LabIoT</span>
         </div>
-      </template>
 
-      <template #end>
-        <div class="nav-links">
-          <pv-button v-for="item in items" :key="item.label" text class="nav-button">
-            <router-link :to="item.to" class="nav-link">
-              {{ t(item.label) }}
-            </router-link>
-          </pv-button>
+        <nav class="nav-menu">
+          <router-link 
+            v-for="item in items" 
+            :key="item.label" 
+            :to="item.to" 
+            class="nav-link"
+          >
+            {{ t(item.label) }}
+          </router-link>
+        </nav>
+
+        <div class="header-actions">
+            <template v-if="!authStore.isSignedIn">
+                <pv-button label="Sign In" text size="small" @click="router.push('/sign-in')" />
+                <pv-button label="Sign Up" size="small" @click="router.push('/sign-up')" />
+            </template>
+            <template v-else>
+                 <span class="mr-2 font-medium text-color-secondary hidden md:inline">{{ authStore.currentUsername }}</span>
+                 <pv-button icon="pi pi-sign-out" text rounded severity="secondary" @click="authStore.signOut(router)" title="Logout" />
+            </template>
+            <language-switcher />
         </div>
-        <language-switcher />
-      </template>
-    </pv-toolbar>
-  </div>
+      </div>
+    </header>
 
-  <div class="main-content">
-    <pv-confirm-dialog />
-    <router-view />
-  </div>
+    <!-- Main Content -->
+    <main class="app-main container">
+      <pv-confirm-dialog />
+      <router-view />
+    </main>
 
-  <div class="footer" role="contentinfo">
-    <div class="footer-inner container">
-      <footer-content />
-    </div>
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="container footer-inner">
+        <footer-content />
+      </div>
+    </footer>
   </div>
 </template>
 
 <style scoped>
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1100;
-  background: var(--gray-dark); /* plomo */
-  color: var(--text-on-dark);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(4px);
-}
-
-
-.pv-toolbar,
-.toolbar {
-  background: var(--gray-dark) !important;
-  color: var(--text-on-dark) !important;
-}
-
-.toolbar-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  user-select: none;
-  padding-left: 6px;
-}
-.toolbar-logo {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-}
-
-.nav-links {
+.layout-wrapper {
   display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  margin-right: 1rem;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.nav-button {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+/* Header Styles */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--surface-border);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+}
+
+.brand-name {
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+}
+
+/* Navigation */
+.nav-menu {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 2rem;
 }
 
 .nav-link {
-  color: var(--text-on-dark);
-  font-weight: 600;
-  text-decoration: none;
-  font-size: 1rem;
-  padding: 0.5rem 0.75rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-}
-.router-link-active,
-.router-link-exact-active {
-  background: var(--secondary-green);
-  color: #fff !important;
+  color: var(--primary-color);
+  background-color: var(--surface-ground);
 }
 
+.router-link-active {
+  color: var(--primary-color);
+  background-color: rgba(59, 130, 246, 0.1); /* Primary color low opacity */
+  font-weight: 600;
+}
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Main Content */
+.app-main {
+  flex: 1; /* Pushes footer down */
+  padding-top: 2rem;
+  padding-bottom: 2rem;
   width: 100%;
-  background: var(--gray-dark) !important;
-  z-index: 1050;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
-  padding: 0.8rem 0;
 }
 
+/* Footer */
+.app-footer {
+  background-color: var(--surface-section);
+  border-top: 1px solid var(--surface-border);
+  padding: 1.5rem 0;
+  margin-top: auto;
+}
 
+.footer-inner {
+  display: flex;
+  justify-content: center;
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+}
+
+/* Responses */
 @media (max-width: 768px) {
-  .nav-links {
-    gap: 0.5rem;
-  }
-  .nav-link {
-    font-size: 0.95rem;
-    padding: 0.4rem 0.6rem;
-  }
-}
-@media (max-width: 520px) {
-  .toolbar-logo {
-    height: 28px;
-  }
-  .footer {
-    padding: 0.6rem 0;
-    font-size: 0.95rem;
-  }
-  .main-content {
-    padding-top: calc(var(--toolbar-height) + 0.6rem);
-    padding-bottom: calc(var(--toolbar-height) + 0.6rem);
-  }
+    .nav-menu {
+        display: none; /* In a real app, we'd add a mobile hamburger menu here */
+    }
 }
 </style>

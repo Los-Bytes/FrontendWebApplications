@@ -31,5 +31,107 @@
   },
   "errors": {
     "occurred": "Ocurrieron errores"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUpAction": "¡Regístrate hoy!",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "signInAction": "Inicia sesión",
+    "loginFirst": "Por favor inicia sesión primero",
+    "logout": "Cerrar Sesión",
+    "currentUser": "Usuario Actual",
+    "loggedInAs": "Conectado como"
+  },
+  "users": {
+    "title": "Usuarios",
+    "newUser": "Nuevo Usuario",
+    "headers": {
+      "id": "ID",
+      "username": "Usuario",
+      "fullName": "Nombre Completo",
+      "email": "Correo",
+      "role": "Rol",
+      "organization": "Organización",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "loginAs": "Entrar como este usuario",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "dialogs": {
+      "deleteTitle": "Eliminando Usuario",
+      "deleteConfirm": "¿Está seguro de que desea eliminar este usuario?"
+    }
+  },
+  "laboratories": {
+    "title": "Mis Laboratorios",
+    "newLab": "Nuevo Laboratorio",
+    "noLabs": "No se encontraron laboratorios. Aún no eres administrador ni miembro de ningún laboratorio.",
+    "headers": {
+      "id": "ID",
+      "name": "Nombre",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "capacity": "Capacidad",
+      "adminId": "ID Admin",
+      "role": "Tu Rol",
+      "actions": "Acciones"
+    },
+    "role": {
+      "admin": "Admin",
+      "member": "Miembro",
+      "noAdmin": "Sin Admin"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "inventory": "Ver Inventario"
+    },
+    "dialogs": {
+      "deleteTitle": "Eliminando Laboratorio",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este laboratorio?",
+      "deleteSuccess": "Laboratorio eliminado con éxito"
+    }
+  },
+  "subscriptions": {
+    "title": "Suscripciones",
+    "newSubscription": "Nueva Suscripción",
+    "headers": {
+      "id": "ID",
+      "user": "Usuario",
+      "plan": "Plan",
+      "status": "Estado",
+      "startDate": "Fecha de Inicio"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "dialogs": {
+      "deleteConfirm": "¿Eliminar suscripción?"
+    },
+    "loading": "Cargando...",
+    "form": {
+      "titleNew": "Nueva Suscripción",
+      "titleEdit": "Editar Suscripción",
+      "userId": "ID Usuario",
+      "plan": "Plan",
+      "status": "Estado",
+      "startDate": "Fecha Inicio",
+      "trialEndDate": "Fin de Prueba",
+      "selectPlan": "Seleccionar Plan",
+      "selectStatus": "Seleccionar Estado",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "loading": "Cargando..."
+    }
+  },
+  "common": {
+    "actions": "Acciones"
   }
 }

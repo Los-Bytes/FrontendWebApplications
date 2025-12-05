@@ -1,4 +1,4 @@
-import {User} from "../domain/user.entity.js";
+import { User } from "../domain/user.entity.js";
 
 /**
  * @class UserAssembler
@@ -11,9 +11,15 @@ export class UserAssembler {
      * @returns {User} The User entity.
      */
     static toEntityFromResource(resource) {
-        return new User({...resource});
+        // Map fields that might have different names or need defaults
+        const mappedResource = {
+            ...resource,
+            username: resource.username || resource.userName,
+            profileImageUrl: resource.imgToImage || resource.profileImageUrl
+        };
+        return new User(mappedResource);
     }
-    
+
     /**
      * @static
      * @param {Object} response - The API response object.

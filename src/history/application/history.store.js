@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { HistoryApi } from "../infrastructure/history-api.js";
 import { HistoryAssembler } from "../infrastructure/history.assembler.js";
-import useAuthStore from "../../iam/application/auth.store.js";
+import useAuthStore from "../../iam/application/iam.store.js";
 
 const historyApi = new HistoryApi();
 
@@ -27,12 +27,12 @@ const useHistoryStore = defineStore("historyStore", () => {
     try {
       const response = await historyApi.getAll();
       let allEntries = HistoryAssembler.toEntityFromResponse(response);
-      
+
       // Filtrar por laboratorio si se proporciona
       if (laboratoryId) {
         allEntries = allEntries.filter(entry => entry.laboratoryId === laboratoryId);
       }
-      
+
       entries.value = allEntries;
       entriesLoaded.value = true;
     } catch (e) {
@@ -45,9 +45,9 @@ const useHistoryStore = defineStore("historyStore", () => {
   async function addHistoryEntry(entry) {
     try {
       // Agregar usuario actual
-      if (authStore.currentUser) {
-        entry.userId = authStore.currentUser.id;
-        entry.userName = authStore.currentUser.userName;
+      if (authStore.isSignedIn) {
+        entry.userId = authStore.currentUserId;
+        entry.userName = authStore.currentUsername;
       }
       entry.timestamp = new Date().toISOString();
 

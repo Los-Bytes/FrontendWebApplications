@@ -27,7 +27,6 @@ export class SubscriptionService {
      */
     listAll() {
         return this.api.getAll()
-            .then(response => SubscriptionAssembler.toEntitiesFromResponse(response))
     }
     /**
      * Retrieve a subscription by its unique identifier.
@@ -38,8 +37,8 @@ export class SubscriptionService {
     getById(id) {
         return this.api.getById(id)
             .then(response => {
-                if (response.status !== 200) throw new Error('Not found')
-                return SubscriptionAssembler.toEntityFromResource(response.data)
+                if (!response) throw new Error('Not found')
+                return response
             })
     }
     /**
@@ -62,7 +61,6 @@ export class SubscriptionService {
             trialEndDate: command.trialEndDate?.toISOString()
         }
         return this.api.create(payload)
-            .then(response => SubscriptionAssembler.toEntityFromResource(response.data))
     }
     /**
      * Update an existing subscription.
@@ -86,7 +84,6 @@ export class SubscriptionService {
             trialEndDate: command.trialEndDate?.toISOString()
         }
         return this.api.update(payload)
-            .then(response => SubscriptionAssembler.toEntityFromResource(response.data))
     }
     /**
      * Cancel an active subscription.

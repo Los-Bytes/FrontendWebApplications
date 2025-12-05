@@ -93,7 +93,7 @@ const saveItem = async () => {
 </script>
 
 <template>
-  <div class="p-4 inventory-form">
+  <div class="p-4 form-container">
     <h1 class="text-2xl font-bold mb-4">
       {{ isEdit ? "Editar Ítem" : "Nuevo Ítem" }}
     </h1>
@@ -161,9 +161,12 @@ const saveItem = async () => {
 
 <style scoped>
 .inventory-form {
-  background: #51a2fd;
-  border-radius: 10px;
+.form-container {
+  background: var(--surface-card);
+  border-radius: var(--border-radius);
   padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--surface-border);
+}
 }
 </style>

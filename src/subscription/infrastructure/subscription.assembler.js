@@ -34,13 +34,12 @@ export class SubscriptionAssembler {
      * @returns {Subscription[]} Array of Subscription entities.
      */
     static toEntitiesFromResponse(response) {
-        if (response.status !== 200) {
-            console.error(`${response.status}: ${response.statusText}`)
-            return []
-        }
+        if (!response.data) return []
+        // Handle both direct array (json-server) and wrapped envelope (likely legacy .NET)
         const data = Array.isArray(response.data)
             ? response.data
-            : response.data['subscriptions']
+            : (response.data.results || response.data.subscriptions || [])
+
         return data.map(r => this.toEntityFromResource(r))
     }
 }

@@ -191,10 +191,11 @@ const saveUser = async () => {
 
 <style scoped>
 .form-container {
-  background: #51a2fd;
-  border-radius: 10px;
+  background: var(--surface-card);
+  border-radius: var(--border-radius);
   padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--surface-border);
 }
 
 .field {

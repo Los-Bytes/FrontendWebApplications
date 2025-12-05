@@ -19,7 +19,11 @@ import {
     Textarea,
     Toast, ToastService,
     Toolbar, Tag,
-    Dialog
+    Dialog,
+    Card,
+    Message,
+    Divider,
+    DatePicker
 } from "primevue";
 import router from "./router.js";
 import pinia from "./pinia.js";
@@ -27,7 +31,7 @@ import pinia from "./pinia.js";
 // noinspection JSCheckFunctionSignatures
 createApp(App)
     .use(i18n)
-    .use(PrimeVue, {theme: {preset:Material}, ripple:true})
+    .use(PrimeVue, { theme: { preset: Material }, ripple: true })
     .use(ConfirmationService)
     .use(DialogService)
     .use(ToastService)
@@ -41,14 +45,19 @@ createApp(App)
     .component('pv-input-number', InputNumber)
     .component('pv-textarea', Textarea)
     .component('pv-select', Select)
+    .component('pv-dropdown', Select)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
     .component('pv-tag', Tag)
     .component('pv-dialog', Dialog)
+    .component('pv-card', Card)
+    .component('pv-message', Message)
+    .component('pv-divider', Divider)
+    .component('pv-calendar', DatePicker)
     .use(router)
     .use(pinia)
     .mount('#app')
 
-import useAuthStore from '../src/iam/application/auth.store.js';
+import useAuthStore from './iam/application/iam.store.js';
 const authStore = useAuthStore();
-authStore.loadUserFromStorage();
+// authStore.loadUserFromStorage();

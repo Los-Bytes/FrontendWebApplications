@@ -23,35 +23,33 @@ function performSignUp() {
 </script>
 
 <template>
-  <div>
-    <h3>Sign Up</h3>
-  </div>
-  <p class="p-fluid mb-5">Please enter the required information to sign in.</p>
-  <div>
-    <form @submit.prevent="performSignUp">
-      <div class="p-fluid">
-        <div class="field mt-5">
-          <pv-float-label>
-            <label for="username">Username</label>
-            <pv-input-text id="username" v-model="form.username" :class="{'p-invalid': !form.username}"/>
-            <small v-if="!form.username" class="p-invalid">Username is required.</small>
-          </pv-float-label>
-        </div>
-        <div class="p-field mt-5">
-          <pv-float-label>
-            <label for="password">Password</label>
-            <pv-input-text id="password" v-model="form.password" :class="{'p-invalid': !form.password}" type="password"/>
-            <small v-if="!form.password" class="p-invalid">Password is required.</small>
-          </pv-float-label>
-        </div>
-        <div class="p-field mt-5">
-          <pv-button type="submit">Sign Up</pv-button>
-        </div>
+  <div class="flex justify-content-center align-items-center min-h-screen surface-ground">
+    <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
+      <div class="text-center mb-5">
+        <h2 class="text-900 text-3xl font-medium mb-3">{{ $t('auth.signUp') }}</h2>
+        <span class="text-600 font-medium line-height-3">{{ $t('auth.haveAccount') }}</span>
+        <router-link to="/sign-in" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">{{ $t('auth.signInAction') }}</router-link>
       </div>
-    </form>
+
+      <form @submit.prevent="performSignUp">
+        <div class="p-fluid">
+          <div class="mb-4">
+            <label for="username" class="block text-900 font-medium mb-2">{{ $t('auth.username') }}</label>
+            <pv-input-text id="username" v-model="form.username" :class="{'p-invalid': !form.username && form.submitted}" required />
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="block text-900 font-medium mb-2">{{ $t('auth.password') }}</label>
+            <pv-input-text id="password" v-model="form.password" type="password" :class="{'p-invalid': !form.password && form.submitted}" required />
+          </div>
+
+          <pv-button type="submit" :label="$t('auth.signUp')" icon="pi pi-user-plus" class="w-full"></pv-button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
-
+/* Scoped styles kept minimal as we use PrimeFlex utilities */
 </style>

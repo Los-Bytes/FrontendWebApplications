@@ -31,5 +31,107 @@
   },
   "errors": {
     "occurred": "Errors occurred"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "username": "Username",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "signUpAction": "Sign up today!",
+    "haveAccount": "Already have an account?",
+    "signInAction": "Sign in",
+    "loginFirst": "Please login first",
+    "logout": "Logout",
+    "currentUser": "Current User",
+    "loggedInAs": "Logged in as"
+  },
+  "users": {
+    "title": "Users",
+    "newUser": "New User",
+    "headers": {
+      "id": "ID",
+      "username": "Username",
+      "fullName": "Full Name",
+      "email": "Email",
+      "role": "Role",
+      "organization": "Organization",
+      "actions": "Actions"
+    },
+    "actions": {
+      "loginAs": "Login as this user",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "deleteTitle": "Deleting User",
+      "deleteConfirm": "Are you sure you want to delete this user?"
+    }
+  },
+  "laboratories": {
+    "title": "My Laboratories",
+    "newLab": "New Laboratory",
+    "noLabs": "No laboratories found. You are not admin or member of any laboratory yet.",
+    "headers": {
+      "id": "ID",
+      "name": "Name",
+      "address": "Address",
+      "phone": "Phone",
+      "capacity": "Capacity",
+      "adminId": "Admin ID",
+      "role": "Your Role",
+      "actions": "Actions"
+    },
+    "role": {
+      "admin": "Admin",
+      "member": "Member",
+      "noAdmin": "No Admin"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "inventory": "View Inventory"
+    },
+    "dialogs": {
+      "deleteTitle": "Deleting Laboratory",
+      "deleteConfirm": "Are you sure you want to delete this laboratory?",
+      "deleteSuccess": "Laboratory deleted successfully"
+    }
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "newSubscription": "New Subscription",
+    "headers": {
+      "id": "ID",
+      "user": "User",
+      "plan": "Plan",
+      "status": "Status",
+      "startDate": "Start Date"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "deleteConfirm": "Delete subscription?"
+    },
+    "loading": "Loading...",
+    "form": {
+      "titleNew": "New Subscription",
+      "titleEdit": "Edit Subscription",
+      "userId": "User ID",
+      "plan": "Plan",
+      "status": "Status",
+      "startDate": "Start Date",
+      "trialEndDate": "Trial End Date",
+      "selectPlan": "Select Plan",
+      "selectStatus": "Select Status",
+      "save": "Save",
+      "cancel": "Cancel",
+      "loading": "Loading..."
+    }
+  },
+  "common": {
+    "actions": "Actions"
   }
 }

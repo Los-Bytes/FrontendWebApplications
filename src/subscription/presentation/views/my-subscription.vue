@@ -7,7 +7,7 @@ import useLaboratoryMngmtStore from "../../../laboratory/application/laboratory.
 import useInventoryStore from "../../../inventory/application/inventory.service.js";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
+const { t, tm } = useI18n();
 const router = useRouter();
 const subscriptionStore = useSubscriptionStore();
 const iamStore = useIamStore();
@@ -22,6 +22,13 @@ const {
   fetchPlans 
 } = subscriptionStore;
 
+/**
+ * Initial data fetching on component mount.
+ * Checks if the user is signed in, fetches subscription plans and user subscriptions,
+ * and loads laboratories and inventory items if not already loaded.
+ * Logs relevant data to the console for debugging purposes.
+ * @returns {Promise<void>}
+ */
 onMounted(async () => {
   if (!iamStore.isSignedIn) {
     alert("Please login first");
@@ -29,20 +36,17 @@ onMounted(async () => {
     return;
   }
 
-  // Cargar planes y suscripciones
   await fetchPlans();
   await fetchSubscriptions();
   
-  // ✅ CARGAR datos para estadísticas
   if (!labStore.laboratoriesLoaded.value) {
     await labStore.fetchLaboratories();
   }
 
-  // ✅ CARGAR inventario SIN filtrar por laboratorio (para obtener todos los items del usuario)
-  await inventoryStore.fetchItems(); // Sin parámetro = obtiene todos
+  await inventoryStore.fetchItems();
   
   console.log('📊 Datos cargados:');
-  console.log('   - Laboratorios:', labStore.userLaboratories.length); // ✅ SIN .value porque es computed
+  console.log('   - Laboratorios:', labStore.userLaboratories.length);
   console.log('   - Items totales:', inventoryStore.items.length);
   console.log('   - Usuario actual:', iamStore.currentUser);
 });
@@ -57,14 +61,18 @@ const planColor = computed(() => {
   return colors[plan] || 'secondary';
 });
 
+/**
+ * Computed property to calculate usage statistics based on user's laboratories and inventory items.
+ * Logs detailed information during the calculation for debugging purposes.
+ * @returns {Object} An object containing total laboratories, total members, total items, average items per lab, and average members per lab.
+ */
 const usageStats = computed(() => {
-  const userLabs = labStore.userLaboratories || []; // ✅ SIN .value porque es computed
+  const userLabs = labStore.userLaboratories || [];
   
   console.log('🔄 Calculando estadísticas...');
   console.log('   - Laboratorios del usuario:', userLabs.length);
   console.log('   - Items en store:', inventoryStore.items?.length || 0);
   
-  // ✅ Calcular total de miembros únicos across all labs del usuario
   const allMembers = new Set();
   userLabs.forEach(lab => {
     if (lab.adminUserId) allMembers.add(lab.adminUserId);
@@ -73,10 +81,8 @@ const usageStats = computed(() => {
     }
   });
 
-  // ✅ Calcular total de items del usuario
   let totalItems = 0;
   userLabs.forEach(lab => {
-    // Asegurarse de que inventoryStore.items existe y es un array
     const allItems = inventoryStore.items || [];
     const labItems = allItems.filter(item => item.laboratoryId === lab.id);
     console.log(`   - Items en lab ${lab.id} (${lab.name}):`, labItems.length);
@@ -86,10 +92,8 @@ const usageStats = computed(() => {
   console.log('   - Total items calculado:', totalItems);
   console.log('   - Total miembros únicos:', allMembers.size);
 
-  // ✅ Promedio de items por laboratorio
   const avgItemsPerLab = userLabs.length > 0 ? Math.round(totalItems / userLabs.length) : 0;
 
-  // ✅ Calcular promedio de miembros por laboratorio
   let totalMembersAcrossLabs = 0;
   userLabs.forEach(lab => {
     let labMemberCount = 0;
@@ -109,7 +113,11 @@ const usageStats = computed(() => {
     avgMembersPerLab: avgMembersPerLab
   };
 });
-
+/**
+ * Formats a timestamp into a human-readable date string in Spanish locale.
+ * @param {number|string} timestamp - The timestamp to format.
+ * @returns {string} Formatted date string or 'N/A' if timestamp is invalid.
+ */
 function formatDate(timestamp) {
   if (!timestamp) return 'N/A';
   return new Date(timestamp).toLocaleDateString('es-ES', {
@@ -118,9 +126,29 @@ function formatDate(timestamp) {
     day: 'numeric'
   });
 }
-
+/**
+ * Navigates to the subscription plans view.
+ * @returns {void}
+ */
 function navigateToPlans() {
   router.push({ name: 'subscription-plans' });
+}
+/**
+ * Retrieves translated features for a given plan name.
+ * @param {string} planName - The name of the subscription plan.
+ * @returns {Array<string>} An array of translated feature strings.
+ * Logs a warning if no features are found for the specified plan.
+ */
+function getTranslatedFeatures(planName) {
+  const planKey = planName.toLowerCase();
+  const features = tm(`plans.${planKey}.features`);
+  
+  if (Array.isArray(features)) {
+    return features;
+  }
+  
+  console.warn(`No se encontraron features para el plan: ${planKey}`);
+  return [];
 }
 </script>
 
@@ -295,7 +323,7 @@ function navigateToPlans() {
         
         <ul class="features-list space-y-3">
           <li 
-            v-for="(feature, index) in currentPlan.features" 
+            v-for="(feature, index) in getTranslatedFeatures(currentPlan.name)" 
             :key="index"
             class="flex items-start p-3 bg-green-50 rounded-lg"
           >

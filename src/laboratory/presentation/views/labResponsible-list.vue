@@ -11,17 +11,22 @@
   const store = useLaboratoryMngmtStore();
   const {labResponsibles, labResponsiblesLoaded, errors, fetchLabResponsibles,
     deleteLabResponsible}=store;
+  
+  /** Load lab responsibles data on component mount. */
   onMounted(()=>{
     if (!labResponsiblesLoaded) fetchLabResponsibles();
     console.log(labResponsibles);
   });
+  /** Navigate to the new lab responsible form view. */
   const navigateToNew = () => {
     router.push({name:'laboratoryMngmt-labResponsible-new'});
   }
+  /** Navigate to the edit lab responsible form view. */
   const navigateEdit = (id) => {
     console.log(id);
     router.push({name:'laboratoryMngmt-labResponsible-edit', params: {id} });
   };
+  /** Confirm and delete a lab responsible. */
   const confirmDelete = (labResponsible) => {
     confirm.require({
       message: 'Are you sure you want to delete this lab responsible?',

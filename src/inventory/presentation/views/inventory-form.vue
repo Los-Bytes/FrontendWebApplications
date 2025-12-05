@@ -12,10 +12,23 @@ const route = useRoute();
 const store = useInventoryStore();
 const subscriptionStore = useSubscriptionStore();
 
+/**
+ * Destructure necessary methods and properties from the inventory store
+ * and subscription store for easier access.
+ */
 const { addItem, updateItem, getItemById, fetchItems, loadUsers, items, usersLoaded } = store;
+/**
+ * Destructure necessary methods and properties from the subscription store.
+ */
 const { currentLimits, canAddInventoryItems, fetchSubscriptions, fetchPlans } = subscriptionStore;
 
+/**
+ * Computed property to determine if the form is in edit mode
+ * based on the presence of an item ID in the route parameters.
+ */
 const isEdit = computed(() => !!route.params.id);
+
+/** Computed property to get the laboratory ID from the route parameters. */
 const laboratoryId = computed(() => parseInt(route.params.labId));
 
 const form = ref({
@@ -27,24 +40,31 @@ const form = ref({
   userId: null,
 });
 
+/** Computed property to get the list of users from the inventory store. */
 const usersList = computed(() => {
   return Array.from(store.users.values());
 });
 
-// Contar items actuales del laboratorio
+/** Computed property to count the current number of items in the laboratory. */
 const currentItemCount = computed(() => {
   if (!store.items) return 0;
   return store.items.filter(item => item.laboratoryId === laboratoryId.value).length;
 });
 
-// Verificar si puede agregar más items
+/** Computed property to determine if a new item can be added based on subscription limits. */
 const canAddNewItem = computed(() => {
-  if (isEdit.value) return true; // Editando, no cuenta como nuevo
+  if (isEdit.value) return true;
   return canAddInventoryItems(currentItemCount.value);
 });
 
+/** Lifecycle hook to perform initial data fetching when the component is mounted.
+ * - Fetch subscription plans and subscriptions if not already loaded.
+ * - Load users if not already loaded.
+ * - Fetch inventory items for the current laboratory if not already loaded.
+ * - If in edit mode, populate the form with the existing item data; if the item does not exist, redirect to the inventory list.
+ * Handles edge cases for data loading and navigation.
+ */
 onMounted(async () => {
-  // Cargar suscripciones
   if (!subscriptionStore.plansLoaded.value) {
     await fetchPlans();
   }
@@ -52,12 +72,10 @@ onMounted(async () => {
     await fetchSubscriptions();
   }
 
-  // Cargar usuarios
   if (!usersLoaded.value) {
     await loadUsers();
   }
   
-  // Cargar items
   if (!items.value || items.value.length === 0) {
     await fetchItems(laboratoryId.value);
   }
@@ -82,8 +100,14 @@ onMounted(async () => {
   }
 });
 
+/** Method to save the inventory item, either by adding a new item or updating an existing one.
+ * - Checks if adding a new item is allowed based on subscription limits; if not, alerts the user.
+ * - Constructs a new InventoryItem object with the form data.
+ * - Calls the appropriate store method to add or update the item.
+ * - Navigates back to the inventory list and refreshes the items after a short delay.
+ * Handles errors during the save process and provides user feedback.
+ */
 const saveItem = async () => {
-  // Validar límites solo para nuevos items
   if (!isEdit.value && !canAddNewItem.value) {
     alert(`Your current plan allows up to ${currentLimits.value.maxInventoryItems} inventory items per laboratory. Current count: ${currentItemCount.value}. Please upgrade your subscription to add more items.`);
     return;
@@ -181,7 +205,7 @@ const saveItem = async () => {
         <pv-select
           v-model="form.userId"
           :options="usersList"
-          optionLabel="userName"
+          optionLabel="username"
           optionValue="id"
           placeholder="Seleccionar usuario"
           class="w-full"

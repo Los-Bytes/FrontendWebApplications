@@ -1,9 +1,16 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
+/** Inventory API class for managing inventory resources. */
 const inventoryEndpointPath = import.meta.env.VITE_INVENTORY_ENDPOINT_PATH;
+/** Users API class for managing user resources. */
 const usersEndpointPath  = import.meta.env.VITE_USERS_ENDPOINT_PATH;
 
+/**
+ * @class InventoryApi
+ * @summary API class for managing inventory items.
+ * Extends the BaseApi to provide CRUD operations for inventory items.
+ */
 export class InventoryApi extends BaseApi {
   #inventoryEndpoint;
   #usersEndpoint;

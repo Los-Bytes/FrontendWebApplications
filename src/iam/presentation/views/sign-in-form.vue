@@ -30,7 +30,9 @@ async function performSignIn() {
   isLoading.value = true;
   
   try {
+    console.log('📝 Form data:', form);
     const signInCommand = new SignInCommand(form);
+    console.log('📦 SignInCommand:', signInCommand);
     await signIn(signInCommand, router);
   } catch (error) {
     console.error('Sign-in error:', error);
@@ -38,7 +40,9 @@ async function performSignIn() {
     isLoading.value = false;
   }
 }
-
+/**
+ * Navigates to the sign-up page.
+ */
 function navigateToSignUp() {
   router.push({ name: 'iam-sign-up' });
 }

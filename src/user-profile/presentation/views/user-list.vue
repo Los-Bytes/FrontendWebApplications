@@ -1,5 +1,4 @@
 <script setup>
-
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
 import {useConfirm} from "primevue";
@@ -14,32 +13,70 @@ const store = useUserProfileStore();
 const iamStore = useIamStore();
 const {users, usersLoaded, errors, fetchUsers, deleteUser}=store;
 
+/**
+ * Lifecycle hook to perform actions on component mount:
+ * - Fetch users if not already loaded.
+ * Logs the loaded users to the console.
+ * Handles initial data loading for the user list view.
+ * @returns {Promise<void>}
+ */
 onMounted(()=>{
   if (!usersLoaded) fetchUsers();
   console.log(users);
 });
-
+/**
+ * Function to navigate to the new user creation form.
+ * Navigates to the 'user-profile-user-new' route.
+ * Also defines a function to navigate to the edit form for a specific user by ID.
+ * @param {number} id - The ID of the user to edit.
+ * @returns {void}
+ */
 const navigateToNew = () => {
   router.push({name:'user-profile-user-new'});
 }
-
+/**
+ * Function to navigate to the edit form for a specific user by ID.
+ * @param {number} id - The ID of the user to edit.
+ * @returns {void}
+ */
 const navigateEdit = (id) => {
   console.log(id);
   router.push({name:'user-profile-user-edit', params: {id} });
 };
-
+/**
+ * Function to confirm and delete a user.
+ * Displays a confirmation dialog before deleting the user.
+ * @param {Object} user - The user object to be deleted.
+ * @returns {void}
+ */
 const confirmDelete = (user) => {
   confirm.require({
     message: 'Are you sure you want to delete this user?',
     header: 'Deleting User',
     icon: 'pi pi-exclamation-triangle',
-    accept: () => { deleteUser(user); },
+    accept: () => { deleteUser(user.id); },
   });
 };
-
+/**
+ * Function to log in as a specific user.
+ * Sets the IAM store's current user and authentication state.
+ * Stores a token and user info in localStorage.
+ * Displays an alert confirming the login and redirects to the laboratories management page.
+ * @param {Object} user - The user object to log in as.
+ * @returns {void}
+ */
 function loginAsUser(user) {
-  iamStore.login(user);
-  alert(`Logged in as: ${user.username}`);
+  const Token = `admin-token-${user.id}-${Date.now()}`;
+  
+  iamStore.currentUser = user;
+  iamStore.currentUsername = user.username;
+  iamStore.currentUserId = user.id;
+  iamStore.isSignedIn = true;
+
+  localStorage.setItem('token', Token);
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  
+  alert(`✅ Logged in as: ${user.username} (${user.fullName})`);
   router.push({ name: "laboratoryMngmt-laboratories" });
 }
 
@@ -51,7 +88,7 @@ function loginAsUser(user) {
 
     <div v-if="iamStore.currentUser" class="mb-4 p-3 bg-blue-400 rounded">
       <strong>{{ t('user-profile.current') }}:</strong> {{ iamStore.currentUser.username }} ({{ iamStore.currentUser.fullName }})
-      <pv-button label="Logout" severity="secondary" size="small" @click="iamStore.logout()" class="ml-3" />
+      <pv-button label="Logout" severity="secondary" size="small" @click="iamStore.signOut(router)" class="ml-3" />
     </div>
 
     <div class="actions-row mb-3">

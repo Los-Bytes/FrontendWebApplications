@@ -1,6 +1,9 @@
 import {LabResponsible} from "../domain/model/labResponsible.js";
 import {Laboratory} from "../domain/model/laboratory.js";
 
+/**
+ * Assembler for converting laboratory resources and responses into Laboratory and LabResponsible entities.
+ */
 export class LaboratoryMngmtAssembler{
     static toLaboratoryEntityFromResource(resource){
         return new Laboratory({...resource});

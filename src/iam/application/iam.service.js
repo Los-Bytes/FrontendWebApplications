@@ -2,7 +2,7 @@ import { IamApi } from "../infrastructure/iam-api.js";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { SignInAssembler } from "../infrastructure/sign-in.assembler.js";
-import { UserAssembler } from "../infrastructure/user.assembler.js";
+import { UserAssembler } from "../../user-profile/infrastructure/user.assembler.js";
 import { SignUpAssembler } from "../infrastructure/sign-up.assembler.js";
 
 const iamApi = new IamApi();

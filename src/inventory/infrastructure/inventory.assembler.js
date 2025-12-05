@@ -1,5 +1,8 @@
 import { InventoryItem } from "../domain/model/inventory.js";
 
+/**
+ * Assembler for converting inventory resources and responses into InventoryItem entities.
+ */
 export class InventoryAssembler {
   static toEntityFromResource(resource) {
     return new InventoryItem({ ...resource });
@@ -20,7 +23,7 @@ export class InventoryAssembler {
       const user = usersMap.get(item.userId);
       return new InventoryItem({
         ...item,
-        userName: user ? user.userName : 'Sin asignar'
+        username: user ? user.username : 'Sin asignar'
       });
     });
   }

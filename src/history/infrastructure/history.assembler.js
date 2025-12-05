@@ -1,5 +1,8 @@
 import { HistoryEntry } from "../domain/model/history-entry.js";
 
+/**
+ * Assembler for converting history resources and responses into HistoryEntry entities.
+ */
 export class HistoryAssembler {
   static toEntityFromResource(resource) {
     return new HistoryEntry({ ...resource });

@@ -1,8 +1,13 @@
 import {BaseApi} from "../../shared/infrastructure/base-api.js";
 import {BaseEndpoint}  from "../../shared/infrastructure/base-endpoint.js";
 
+/** Laboratory API endpoint path */
 const laboratoryEndpointPath=import.meta.env.VITE_LABORATORIES_ENDPOINT_PATH;
 
+/**
+ * @class LaboratoryApi
+ * @summary Handles API interactions for laboratory entities.
+ */
 export class LaboratoryApi extends BaseApi {
     #laboratoryEndpoint;
 

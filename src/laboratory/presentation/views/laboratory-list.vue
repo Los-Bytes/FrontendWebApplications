@@ -4,46 +4,58 @@ import {useRouter} from "vue-router";
 import {useConfirm} from "primevue";
 import {onMounted, watch} from "vue";
 import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
-import useIamStore from "../../../iam/application/iam.service.js"; // ✅ ACTUALIZADO
+import useIamStore from "../../../iam/application/iam.service.js";
 
 const {t}=useI18n();
 const router = useRouter();
 const confirm = useConfirm();
 const store = useLaboratoryMngmtStore();
-const iamStore = useIamStore(); // ✅ ACTUALIZADO
+const iamStore = useIamStore();
 const {userLaboratories, laboratoriesLoaded, fetchLaboratories,
   deleteLaboratory, isLabAdmin}=store;
 
+/** Load laboratories and check user authentication on component mount. 
+ * - If the user is not signed in, redirect to the sign-in page.
+ * - Load laboratories data.
+ * - Log the loaded laboratories and current user for debugging.
+*/
 onMounted(()=>{
-  if (!iamStore.isSignedIn) { // ✅ ACTUALIZADO
+  if (!iamStore.isSignedIn) {
     alert("Please login first");
-    router.push({ name: 'iam-sign-in' }); // ✅ ACTUALIZADO
+    router.push({ name: 'iam-sign-in' });
     return;
   }
   loadData();
 });
 
+/** Function to load laboratories data and log relevant information. */
 async function loadData() {
   await fetchLaboratories();
   console.log('Laboratories loaded:', userLaboratories.value);
-  console.log('Current user:', iamStore.currentUser); // ✅ ACTUALIZADO
+  console.log('Current user:', iamStore.currentUser);
 }
-
+/** Watch for route changes to reload laboratories data when navigating to the laboratories list view. */
 watch(() => router.currentRoute.value.fullPath, (newPath) => {
   if (newPath.includes('/laboratories') && !newPath.includes('/new') && !newPath.includes('/edit')) {
     loadData();
   }
 });
-
+/** Watch for route changes to reload laboratories data when navigating to the laboratories list view. */
 const navigateToNew = () => {
   router.push({name:'laboratoryMngmt-laboratory-new'});
 };
 
+/** Navigate to the edit laboratory view for the given laboratory ID. */
 const navigateEdit = (id) => {
   console.log(id);
   router.push({name:'laboratoryMngmt-laboratory-edit', params: {id} });
 };
 
+/** Confirm and delete a laboratory by its ID.
+ * - Prompts the user for confirmation before deletion.
+ * - Calls the store method to delete the laboratory upon confirmation.
+ * - Reloads the laboratories data after deletion.
+ */
 const confirmDelete = (labId) => {
   confirm.require({
     message: 'Are you sure you want to delete this laboratory?',

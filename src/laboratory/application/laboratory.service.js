@@ -3,54 +3,68 @@ import {computed, ref} from "vue";
 import {LaboratoryApi} from "../infraestructure/laboratory-api.js";
 import {LabResponsibleApi} from "../infraestructure/labResponsible-api.js";
 import {LaboratoryMngmtAssembler} from "../infraestructure/laboratory.assembler.js";
-import useIamStore from "../../iam/application/iam.service.js"; // ✅ ACTUALIZADO
+import useIamStore from "../../iam/application/iam.service.js";
 
 const laboratoryApi = new LaboratoryApi();
 const labResponsibleApi = new LabResponsibleApi();
 
+/**
+ * Laboratory Management Store
+ * @module laboratoryMngmtStore
+ * @description Store for managing laboratories and lab responsibles.
+ * @returns {object} Store with state, getters, and actions for laboratory management.
+ */
 const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
-
+    /** @type {ref} Array laboratories - List of laboratory entities */
     const laboratories=ref([]);
+    /** @type {ref} Array labResponsibles - List of lab responsible entities */
     const labResponsibles=ref([]);
+    /** @type {ref} Array errors - List of errors encountered */
     const errors=ref([]);
+    /** @type {ref} Boolean laboratoriesLoaded - Flag indicating if laboratories have been loaded */
     const laboratoriesLoaded=ref(false);
+    /** @type {ref} Boolean labResponsiblesLoaded - Flag indicating if lab responsibles have been loaded */
     const labResponsiblesLoaded=ref(false);
+    /** @type {computed} Number laboratoriesCount - Count of loaded laboratories */
     const laboratoriesCount=computed(()=>laboratoriesLoaded? laboratories.value.length : 0);
+    /** @type {computed} Number labResponsiblesCount - Count of loaded lab responsibles */
     const labResponsiblesCount=computed(()=>labResponsiblesLoaded? labResponsibles.value.length : 0);
-    const iamStore = useIamStore(); // ✅ ACTUALIZADO
+    /** @type {object} iamStore - Instance of IAM store for user management */
+    const iamStore = useIamStore();
 
-    // Filtrar laboratorios del usuario actual (admin o miembro)
+    /**
+     * @type {computed} Array userLaboratories - Laboratories where the current user is admin or member
+     */
     const userLaboratories = computed(() => {
-        if (!iamStore.currentUser) return []; // ✅ ACTUALIZADO
+        if (!iamStore.currentUser) return [];
         
-        const userId = iamStore.currentUser.id; // ✅ ACTUALIZADO
+        const userId = iamStore.currentUser.id;
         return laboratories.value.filter(lab => 
             lab.adminUserId === userId || 
             (lab.memberUserIds && lab.memberUserIds.includes(userId))
         );
     });
 
-    // Verificar si el usuario es admin de un laboratorio
+    /** Check if the current user is the admin of a given laboratory */
     function isLabAdmin(labId) {
-        if (!iamStore.currentUser) return false; // ✅ ACTUALIZADO
+        if (!iamStore.currentUser) return false;
         const lab = laboratories.value.find(l => l.id === labId);
-        return lab && lab.adminUserId === iamStore.currentUser.id; // ✅ ACTUALIZADO
+        return lab && lab.adminUserId === iamStore.currentUser.id;
     }
 
-    // Verificar si el usuario es miembro de un laboratorio
+    /** Check if the current user is a member of a given laboratory */
     function isLabMember(labId) {
-        if (!iamStore.currentUser) return false; // ✅ ACTUALIZADO
+        if (!iamStore.currentUser) return false;
         const lab = laboratories.value.find(l => l.id === labId);
-        return lab && lab.memberUserIds && lab.memberUserIds.includes(iamStore.currentUser.id); // ✅ ACTUALIZADO
+        return lab && lab.memberUserIds && lab.memberUserIds.includes(iamStore.currentUser.id);
     }
 
-    // Verificar si el usuario tiene acceso al laboratorio
+    /** Check if the current user has access (admin or member) to a given laboratory */
     function hasLabAccess(labId) {
         return isLabAdmin(labId) || isLabMember(labId);
     }
 
-    // 1) Laboratory Management
-    // Fetch all laboratories
+    /** Fetch all laboratories from the API */
     function fetchLaboratories(){
         return laboratoryApi.getLaboratories().then(response=>{
             laboratories.value=LaboratoryMngmtAssembler.toLaboratoryEntityFromResponse(response);
@@ -60,26 +74,23 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Get laboratory by id
+    /** Get a laboratory by its ID */
     function getLaboratoryById(id){
         let idNum=parseInt(id);
         return laboratories.value.find(lab=>lab["id"]===idNum);
     }
 
-    // Add new laboratory
+    /** Add a new laboratory */
     function addLaboratory(laboratory) {
-        // ✅ Asignar el usuario actual como administrador
-        if (iamStore.currentUser) { // ✅ ACTUALIZADO
-            laboratory.adminUserId = iamStore.currentUser.id; // ✅ ACTUALIZADO
+        if (iamStore.currentUser) {
+            laboratory.adminUserId = iamStore.currentUser.id;
             
-            // ✅ Si no tiene memberUserIds, inicializar como array vacío
             if (!laboratory.memberUserIds) {
                 laboratory.memberUserIds = [];
             }
             
-            // ✅ Si labResponsibleId está presente y no es el mismo que el admin, agregarlo como miembro
             if (laboratory.labResponsibleId && 
-                parseInt(laboratory.labResponsibleId) !== iamStore.currentUser.id && // ✅ ACTUALIZADO
+                parseInt(laboratory.labResponsibleId) !== iamStore.currentUser.id &&
                 !laboratory.memberUserIds.includes(parseInt(laboratory.labResponsibleId))) {
                 laboratory.memberUserIds.push(parseInt(laboratory.labResponsibleId));
             }
@@ -96,7 +107,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Update laboratory
+    /** Update an existing laboratory */
     function updateLaboratory(laboratory){
         if (!isLabAdmin(laboratory.id)) {
             console.error("Only lab admin can update this laboratory");
@@ -115,7 +126,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Delete laboratory by id
+    /** Delete a laboratory by its ID */
     function deleteLaboratory(id){
         if (!isLabAdmin(id)) {
             console.error("Only lab admin can delete this laboratory");
@@ -132,7 +143,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Añadir miembro a un laboratorio (solo admin)
+    /** Add a member to a laboratory */
     function addMemberToLab(labId, userId) {
         if (!isLabAdmin(labId)) {
             console.error("Only lab admin can add members");
@@ -153,7 +164,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         return Promise.resolve();
     }
 
-    // Remover miembro de un laboratorio (solo admin)
+    /** Remove a member from a laboratory */
     function removeMemberFromLab(labId, userId) {
         if (!isLabAdmin(labId)) {
             console.error("Only lab admin can remove members");
@@ -170,8 +181,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         return Promise.resolve();
     }
 
-    // 2) Laboratory Member Management
-    // Lab Responsible Management
+    /** Fetch all lab responsibles from the API */
     function fetchLabResponsibles(){
         return labResponsibleApi.getLabResponsibles().then(response=>{
             labResponsibles.value=LaboratoryMngmtAssembler.toLabResponsibleEntityFromResponse(response);
@@ -180,14 +190,14 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
             errors.value.push(error);
         });
     }
-    
-    // Get lab responsible by id
+
+    /** Get a lab responsible by its ID */
     function getLabResponsibleById(id){
         let idNum=parseInt(id);
         return labResponsibles.value.find(responsible=>responsible["id"]===idNum);
     }
 
-    // Add new lab responsible
+    /** Add a new lab responsible */
     function addLabResponsible(labResponsible){
         labResponsibleApi.createLabResponsible(labResponsible).then(response=>{
             const resource=response.data;
@@ -198,7 +208,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Update lab responsible
+    /** Update an existing lab responsible */
     function updateLabResponsible(labResponsible){
         labResponsibleApi.updateLabResponsible(labResponsible).then(response=>{
             const resource=response.data;
@@ -210,7 +220,7 @@ const useLaboratoryMngmtStore= defineStore('laboratoryMngmt',()=>{
         });
     }
 
-    // Delete lab responsible by id
+    /** Delete a lab responsible by its ID */
     function deleteLabResponsible(id){
         labResponsibleApi.deleteLabResponsible(id).then(()=>{
             const index=labResponsibles.value.findIndex(responsible=>responsible['id']===id);

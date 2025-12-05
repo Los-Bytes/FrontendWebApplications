@@ -13,13 +13,31 @@ const historyStore = useHistoryStore();
 const labStore = useLaboratoryMngmtStore();
 const iamStore = useIamStore();
 
-const { entries, entriesLoaded, fetchHistory } = historyStore;
+/**
+ * Computed property for checking if history entries are loaded
+ * and function to fetch history entries for the current laboratory.
+ * Also computes the current laboratory and filters history entries
+ * for that laboratory.
+ */
+const {entriesLoaded, fetchHistory } = historyStore;
+
+/**
+ * Computed property for the current laboratory ID from route params.
+ */
 const laboratoryId = computed(() => parseInt(route.params.labId));
 
+/**
+ * Computed property for the current laboratory based on the ID.
+ */
 const currentLab = computed(() => {
   return labStore.getLaboratoryById(laboratoryId.value);
 });
 
+/**
+ * Computed property for filtering history entries by the current laboratory ID.
+ * Handles cases where entries may be undefined or not an array.
+ * Returns an empty array in such cases.
+ */
 const labHistory = computed(() => {
   if (!historyStore.entries || !Array.isArray(historyStore.entries)) {
     return [];
@@ -27,6 +45,15 @@ const labHistory = computed(() => {
   return historyStore.entries.filter(entry => entry.laboratoryId === laboratoryId.value);
 });
 
+/**
+ * Lifecycle hook to perform actions on component mount:
+ * - Check if the user is signed in; if not, redirect to sign-in page.
+ * - Fetch laboratories if not already loaded.
+ * - Check if the user has access to the current laboratory; if not, redirect to laboratories management page.
+ * - Fetch history entries for the current laboratory.
+ * Logs the loaded history entries to the console.
+ * Handles edge cases for user authentication and laboratory access.
+ */
 onMounted(async () => {
   if (!iamStore.isSignedIn) {
     alert("Please login first");
@@ -51,6 +78,9 @@ onMounted(async () => {
   console.log('  - Lab history:', labHistory.value);
 });
 
+/**
+ * Function to navigate back to the inventory list of the current laboratory.
+ */
 function navigateBack() {
   router.push({ 
     name: "inventory-list", 
@@ -58,6 +88,12 @@ function navigateBack() {
   });
 }
 
+/**
+ * Helper function to format timestamps into a readable date string.
+ * @param {number} timestamp - The timestamp to format.
+ * @returns {string} Formatted date string.
+ * Uses Spanish locale for formatting.
+ */
 function formatDate(timestamp) {
   return new Date(timestamp).toLocaleString('es-ES', {
     year: 'numeric',
@@ -68,6 +104,12 @@ function formatDate(timestamp) {
   });
 }
 
+/**
+ * Helper function to get the severity level for a given action.
+ * @param {string} action - The action type.
+ * @returns {string} Severity level for the action.
+ * Maps action types to severity levels for UI display.
+ */
 function getActionSeverity(action) {
   const severityMap = {
     'created': 'success',
@@ -79,6 +121,11 @@ function getActionSeverity(action) {
   return severityMap[action] || 'info';
 }
 
+/**
+ * Helper function to translate action types to Spanish.
+ * @param {string} action - The action type.
+ * @returns {string} Translated action string.
+ */
 function translateAction(action) {
   const translations = {
     'created': 'Creado',
@@ -143,7 +190,7 @@ function translateAction(action) {
 
       <pv-column field="quantity" :header="t('history.quantity')" />
 
-      <pv-column field="userName" :header="t('history.user')" />
+      <pv-column field="username" :header="t('history.user')" />
     </pv-data-table>
   </div>
 </template>

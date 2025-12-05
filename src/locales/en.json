@@ -239,5 +239,35 @@
     "text-4": "When you downgrade, existing data is retained, but you won't be able to add more until you reach the limit.",
     "text-5": "Plan changes are",
     "text-5-strong": "immediate."
+  },
+  "plans": {
+    "free": {
+      "features": [
+        "Up to 3 members per laboratory",
+        "Up to 50 items in inventory",
+        "Basic history",
+        "Email support"
+      ]
+    },
+    "pro": {
+      "features": [
+        "Up to 10 members per laboratory",
+        "Up to 200 items in inventory",
+        "Complete history",
+        "Priority support",
+        "Advanced reports"
+      ]
+    },
+    "max": {
+      "features": [
+        "Unlimited members per laboratory",
+        "Unlimited inventory items",
+        "Complete history with export",
+        "24/7 support",
+        "Advanced and customized reports",
+        "API access",
+        "Priority on new features"
+      ]
+    }
   }
 }

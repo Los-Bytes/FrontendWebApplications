@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed, onMounted } from "vue";
 import useUserProfileStore from "../../application/user-profile.service.js";
-import { User } from "../../domain/model/user.js";
+import { User } from "../../domain/model/user.entity.js";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -11,10 +11,23 @@ const router = useRouter();
 const store = useUserProfileStore();
 const { addUser, updateUser, getUserById, fetchUsers, users } = store;
 
+/**
+ * Computed property to determine if the form is in edit mode
+ * based on the presence of an 'id' parameter in the route.
+ * If 'id' exists, the form is in edit mode; otherwise, it's for creating a new user.
+ * Returns a boolean value.
+ * @returns {boolean} True if editing an existing user, false if creating a new user.
+ */
 const isEdit = computed(() => !!route.params.id);
 
+/**
+ * Reactive form object to hold user data.
+ * Includes fields for username, full name, email, phone, role,
+ * organization, document registration type, and image URL.
+ * Initialized with default values.
+ */
 const form = ref({
-  userName: '',
+  username: '',
   fullName: '',
   email: '',
   phone: '',
@@ -24,6 +37,12 @@ const form = ref({
   imgToImage: 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg'
 });
 
+/**
+ * Computed property for role options in the user form.
+ * Each option includes a label (localized) and a corresponding value.
+ * Returns an array of role option objects.
+ * @returns {Array<{label: string, value: string}>} Array of role options for the select input.
+ */
 const roleOptions = computed(() => [
   { label: t('user-profile.technician'), value: 'technician' },
   { label: t('user-profile.researcher'), value: 'researcher' },
@@ -31,8 +50,22 @@ const roleOptions = computed(() => [
   { label: t('user-profile.inspector'), value: 'inspector' }
 ]);
 
+/**
+ * Computed property for document type options in the user form.
+ * Returns an array of document type strings, including localized options.
+ * @returns {Array<string>} Array of document type options for the select input.
+ */
 const documentOptions = computed(() => ['DNI', t('user-profile.passport'), t('user-profile.foreign-card')]);
 
+/**
+ * Lifecycle hook to perform actions on component mount:
+ * - Fetch users if not already loaded.
+ * - If in edit mode, retrieve the user by ID from route params
+ *  and populate the form with existing user data.
+ *  If the user is not found, redirect to the users list page.
+ * Handles both creating new users and editing existing ones.
+ * @returns {Promise<void>}
+ */
 onMounted(async () => {
   if (!users.value || users.value.length === 0) {
     await fetchUsers();
@@ -42,7 +75,7 @@ onMounted(async () => {
     const user = getUserById(parseInt(route.params.id));
     if (user) {
       form.value = {
-        userName: user.userName,
+        username: user.username,
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
@@ -56,11 +89,17 @@ onMounted(async () => {
     }
   }
 });
-
+/**
+ * Function to save the user form data.
+ * Creates a new user or updates an existing one based on the form data.
+ * After saving, redirects to the users list page.
+ * Handles errors during the save process.
+ * @returns {Promise<void>}
+ */
 const saveUser = async () => {
   const newUser = new User({
     id: isEdit.value ? parseInt(route.params.id) : null,
-    userName: form.value.userName,
+    username: form.value.username,
     fullName: form.value.fullName,
     email: form.value.email,
     phone: form.value.phone,
@@ -95,7 +134,7 @@ const saveUser = async () => {
         <label for="username">{{ t('user-profile.username') }}</label>
         <pv-input-text 
           id="username" 
-          v-model="form.userName" 
+          v-model="form.username" 
           required 
           class="w-full"
           autocomplete="username"

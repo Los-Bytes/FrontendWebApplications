@@ -5,22 +5,41 @@ import { InventoryAssembler } from "../infrastructure/inventory.assembler.js";
 import useHistoryStore from "../../history/application/history.store.js";
 import { HistoryEntry } from "../../history/domain/model/history-entry.js";
 
+/**
+ * Store to manage inventory items.
+ */
 const inventoryApi = new InventoryApi();
 
+/**
+ * Pinia store for inventory management.
+ * Manages inventory items, users, and related operations.
+ * @returns {object} The inventory store with state and actions.
+ */
 const useInventoryStore = defineStore("inventoryStore", () => {
+  /** @type {ref} Array of inventory items */
   const items = ref([]);
+  /** @type {ref} Map of users by ID */
   const users = ref(new Map());
+  /** @type {ref} Array of errors */
   const errors = ref([]);
+  /** @type {ref} Boolean indicating if items are loaded */
   const itemsLoaded = ref(false);
+  /** @type {ref} Boolean indicating if users are loaded */
   const usersLoaded = ref(false);
+  /** @type {computed} Count of items */
   const itemsCount = computed(() => (itemsLoaded.value ? items.value.length : 0));
   
+  /** Get history store instance */
   const historyStore = useHistoryStore();
 
+  /** Filter items by laboratory ID
+   * @return {Function} Function that takes labId and returns filtered items
+  */
   const getItemsByLaboratory = computed(() => (labId) => {
     return items.value.filter(item => item.laboratoryId === labId);
   });
 
+  /** Load users from API */
   async function loadUsers() {
     if (usersLoaded.value) return true;
     
@@ -39,7 +58,10 @@ const useInventoryStore = defineStore("inventoryStore", () => {
       return false;
     }
   }
-
+  /** Fetch all inventory items, optionally filtered by laboratory ID
+   * @param {number|null} laboratoryId - Laboratory ID to filter by (optional)
+   * @return {Promise<void>}
+  */
   async function fetchItems(laboratoryId = null) {
     console.log("fetchItems llamado con laboratoryId:", laboratoryId);
     try {
@@ -95,27 +117,33 @@ const useInventoryStore = defineStore("inventoryStore", () => {
     }
   }
 
+  /** Get item by ID
+   * @param {number|string} id - Item ID
+   * @return {Object|undefined} The inventory item or undefined if not found
+  */
   function getItemById(id) {
     const idNum = parseInt(id);
     return items.value.find((i) => i.id === idNum);
   }
 
+  /** Add a new inventory item
+   * @param {Object} item - The inventory item to add
+   * @return {Promise<void>}
+  */
   async function addItem(item) {
     try {
       const response = await inventoryApi.createItem(item);
       const newItem = InventoryAssembler.toEntityFromResource(response.data);
       
-      // ✅ Asignar userName desde el map de usuarios
       if (item.userId && users.value.has(item.userId)) {
         const user = users.value.get(item.userId);
-        newItem.userName = user.userName;
+        newItem.username = user.username;
       } else {
-        newItem.userName = 'Sin asignar';
+        newItem.username = 'Sin asignar';
       }
       
       items.value.push(newItem);
 
-      // Registrar en historial si existe
       if (historyStore) {
         await historyStore.addHistoryEntry(new HistoryEntry({
           inventoryItemId: newItem.id,
@@ -133,17 +161,20 @@ const useInventoryStore = defineStore("inventoryStore", () => {
     }
   }
 
+  /** Update an existing inventory item
+   * @param {Object} item - The inventory item to update
+   * @return {Promise<void>}
+  */
   async function updateItem(item) {
     try {
       const oldItem = getItemById(item.id);
       const response = await inventoryApi.updateItem(item);
       const user = users.value.get(item.userId);
       const updatedItem = InventoryAssembler.toEntityFromResource(response.data);
-      updatedItem.userName = user ? user.userName : 'Sin asignar';
+      updatedItem.username = user ? user.username : 'Sin asignar';
       const index = items.value.findIndex((i) => i.id === updatedItem.id);
       if (index !== -1) items.value[index] = updatedItem;
 
-      // Registrar en historial
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: updatedItem.id,
         laboratoryId: updatedItem.laboratoryId,
@@ -158,7 +189,10 @@ const useInventoryStore = defineStore("inventoryStore", () => {
       errors.value.push(e);
     }
   }
-
+  /** Delete an inventory item
+   * @param {number|string} id - The ID of the item to delete
+   * @return {Promise<void>}
+  */
   async function deleteItem(id) {
     try {
       const item = getItemById(id);
@@ -166,7 +200,6 @@ const useInventoryStore = defineStore("inventoryStore", () => {
       const index = items.value.findIndex((i) => i.id === id);
       if (index !== -1) items.value.splice(index, 1);
 
-      // Registrar en historial
       if (item) {
         await historyStore.addHistoryEntry(new HistoryEntry({
           inventoryItemId: item.id,
@@ -184,24 +217,24 @@ const useInventoryStore = defineStore("inventoryStore", () => {
     }
   }
 
-  // Cambiar estados
-  // Vendido
+  /** Mark an item as sold
+   * @param {Object} item - The inventory item to mark as sold
+   * @param {number} quantitySold - The quantity sold
+   * @return {Promise<void>}
+  */
   async function markAsSold(item, quantitySold) {
     try {
       const previousStatus = item.status;
       const previousQuantity = item.quantity;
       
-      // Reducir la cantidad
       item.quantity = item.quantity - quantitySold;
       
-      // Si la cantidad llega a 0, cambiar estado
       if (item.quantity === 0) {
         item.status = "Agotado";
       }
       
       await updateItem(item);
 
-      // Registrar en historial - primero la actualización de cantidad
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -212,7 +245,6 @@ const useInventoryStore = defineStore("inventoryStore", () => {
         description: `Item "${item.name}" actualizado - Cantidad: ${previousQuantity} → ${item.quantity}`
       }));
 
-      // Luego registrar la venta
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -227,23 +259,24 @@ const useInventoryStore = defineStore("inventoryStore", () => {
       errors.value.push(e);
     }
   }
-// Uso en prácticas
+  /*  Mark an item as used in practices
+   * @param {Object} item - The inventory item to mark as used
+   * @param {number} quantityUsed - The quantity used
+   * @return {Promise<void>}
+  */
   async function markAsUsed(item, quantityUsed) {
     try {
       const previousStatus = item.status;
       const previousQuantity = item.quantity;
       
-      // Reducir la cantidad
       item.quantity = item.quantity - quantityUsed;
       
-      // Si la cantidad llega a 0, cambiar estado
       if (item.quantity === 0) {
         item.status = "Agotado";
       }
       
       await updateItem(item);
 
-      // Registrar en historial - primero la actualización de cantidad
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -254,7 +287,6 @@ const useInventoryStore = defineStore("inventoryStore", () => {
         description: `Item "${item.name}" actualizado - Cantidad: ${previousQuantity} → ${item.quantity}`
       }));
 
-      // Luego registrar el uso
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -269,23 +301,24 @@ const useInventoryStore = defineStore("inventoryStore", () => {
       errors.value.push(e);
     }
   }
-// Devolver a stock
+  /** Mark an item as returned to stock
+   * @param {Object} item - The inventory item to mark as returned
+   * @param {number} quantityReturned - The quantity returned
+   * @return {Promise<void>}
+  */
   async function markAsReturned(item, quantityReturned) {
     try {
       const previousStatus = item.status;
       const previousQuantity = item.quantity;
       
-      // Aumentar la cantidad devuelta
       item.quantity = item.quantity + quantityReturned;
       
-      // Cambiar estado a "En stock" si estaba agotado
       if (item.status === "Agotado") {
         item.status = "En stock";
       }
       
       await updateItem(item);
 
-      // Registrar en historial - primero la actualización de cantidad
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -296,7 +329,6 @@ const useInventoryStore = defineStore("inventoryStore", () => {
         description: `Item "${item.name}" actualizado - Cantidad: ${previousQuantity} → ${item.quantity}`
       }));
 
-      // Luego registrar la devolución
       await historyStore.addHistoryEntry(new HistoryEntry({
         inventoryItemId: item.id,
         laboratoryId: item.laboratoryId,
@@ -312,10 +344,11 @@ const useInventoryStore = defineStore("inventoryStore", () => {
     }
   }
 
-  // Filtrado para historial
+  /** Computed property for sold items */
   const soldItems = computed(() =>
     items.value.filter((i) => i.status === "Vendido")
   );
+  /** Computed property for items used in practices */
   const usedItems = computed(() =>
     items.value.filter((i) => i.status === "Uso en prácticas")
   );

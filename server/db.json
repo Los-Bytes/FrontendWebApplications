@@ -2,7 +2,20 @@
   "users": [
     {
       "id": 1,
-      "userName": "u201916143",
+      "username": "admin",
+      "password": "admin123",
+      "fullName": "System Administrator",
+      "email": "admin@labiot.com",
+      "phone": "+51999999999",
+      "role": "admin",
+      "organization": "LabIoT Platform",
+      "documentRegistration": "DNI",
+      "imgToImage": "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg",
+      "suscriptionPlan": "Max"
+    },
+    {
+      "id": 2,
+      "username": "u201916143",
       "password": "contra123",
       "fullName": "Marcelo Mazuelos",
       "email": "u201916143@upc.edu.pe",
@@ -22,8 +35,8 @@
       "quantity": 5,
       "status": "En stock",
       "description": "Guantes de latex marca Epin",
-      "userId": 1,
-      "userName": "",
+      "userId": 2,
+      "username": "",
       "laboratoryId": 1
     }
   ],
@@ -37,7 +50,7 @@
       "newStatus": "En stock",
       "quantity": 5,
       "userId": 1,
-      "userName": "u201916143",
+      "username": "u201916143",
       "timestamp": "2025-12-03T13:36:12.173Z",
       "description": "Item \"Par de Guantes de Latex\" creado"
     }
@@ -52,7 +65,7 @@
       "capacity": 1000,
       "registrationDate": "2025-12-03T13:24:05.174Z",
       "labResponsibleId": null,
-      "adminUserId": 1,
+      "adminUserId": 2,
       "memberUserIds": []
     }
   ],
@@ -60,6 +73,16 @@
     {
       "id": 1,
       "userId": 1,
+      "planType": "Max",
+      "startDate": "2025-01-01T00:00:00Z",
+      "endDate": null,
+      "maxMembers": -1,
+      "maxInventoryItems": -1,
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "userId": 2,
       "planType": "Free",
       "startDate": "2025-12-03T04:41:47.780Z",
       "endDate": null,

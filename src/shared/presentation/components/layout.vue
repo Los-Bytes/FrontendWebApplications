@@ -1,18 +1,72 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import { computed } from "vue";
 import FooterContent from "./footer-content.vue";
 import LanguageSwitcher from "./language-switcher.vue";
 import AuthenticationSection from "../../../iam/presentation/components/authentication-section.vue";
+import useIamStore from "../../../iam/application/iam.service.js";
 
 const { t } = useI18n();
+const iamStore = useIamStore();
 
-const items = [
+/**
+ * Computed property to check if the current user is an admin.
+ * @returns {boolean} True if the user is an admin, false otherwise.
+ */
+const isAdmin = computed(() => {
+  return iamStore.currentUser?.role === 'admin';
+});
+
+/**
+ * Computed property to check if the user is authenticated.
+ * @returns {boolean} True if the user is signed in, false otherwise.
+ */
+const isAuthenticated = computed(() => {
+  return iamStore.isSignedIn;
+});
+
+/**
+ * Menu items configuration based on user authentication and role.
+ * @type {Array<{label: string, to: string}>}
+ */
+const publicItems = [
   { label: "option.home", to: "/home" },
-  { label: "option.about", to: "/about" },
-  { label: "option.users", to: "/user-profile/users" },
+  { label: "option.about", to: "/about" }
+];
+/**
+ * Menu items for authenticated users.
+ * @type {Array<{label: string, to: string}>}
+ */
+const authenticatedItems = [
   { label: "option.mySubscription", to: "/subscription/my-subscription" },
   { label: "option.laboratories", to: "/laboratory/laboratories" },
 ];
+
+/**
+ * Menu items for admin users.
+ * @type {Array<{label: string, to: string}>}
+ */
+const adminItems = [
+  { label: "option.users", to: "/user-profile/users" }
+];
+
+/**
+ * Computed property to get the menu items based on user authentication and role.
+ * @returns {Array<{label: string, to: string}>} The menu items to be displayed.
+ */
+const items = computed(() => {
+  let menuItems = [...publicItems];
+  
+  if (isAuthenticated.value) {
+    if (isAdmin.value) {
+      menuItems = [...menuItems, ...adminItems];
+    }
+    menuItems = [...menuItems, ...authenticatedItems];
+  }
+  
+  return menuItems;
+});
+
 </script>
 
 <template>

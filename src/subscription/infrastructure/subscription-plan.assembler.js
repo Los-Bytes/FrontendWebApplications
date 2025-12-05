@@ -1,5 +1,7 @@
 import { SubscriptionPlan } from "../domain/model/subscription-plan.js";
-
+/**
+ * SubscriptionPlanAssembler is responsible for converting between SubscriptionPlan entities and their corresponding API resources and responses.
+ */
 export class SubscriptionPlanAssembler {
   static toEntityFromResource(resource) {
     return new SubscriptionPlan({ ...resource });
@@ -11,7 +13,6 @@ export class SubscriptionPlanAssembler {
       return [];
     }
     
-    // Maneja tanto respuestas directas como respuestas anidadas
     let resources;
     
     if (response.data instanceof Array) {
@@ -21,7 +22,6 @@ export class SubscriptionPlanAssembler {
     } else if (response.data["subscription-plans"]) {
       resources = response.data["subscription-plans"];
     } else {
-      // Si es un objeto único
       resources = [response.data];
     }
     

@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import useLaboratoryMngmtStore from "../../application/laboratory.service.js";
-import useIamStore from "../../../iam/application/iam.service.js"; // ✅ ACTUALIZADO
+import useIamStore from "../../../iam/application/iam.service.js";
 import useSubscriptionStore from "../../../subscription/application/subscription.service.js";
 import { computed, onMounted, ref } from "vue";
 import { Laboratory } from "../../domain/model/laboratory.js";
@@ -11,10 +11,12 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const store = useLaboratoryMngmtStore();
-const iamStore = useIamStore(); // ✅ ACTUALIZADO
+const iamStore = useIamStore();
 const subscriptionStore = useSubscriptionStore();
 
+/** Destructure necessary methods and properties from the stores. */ 
 const { errors, addLaboratory, updateLaboratory, fetchLaboratories, getLaboratoryById } = store;
+/** Destructure necessary methods and properties from the subscription store. */ 
 const { currentLimits, canAddMembers, fetchSubscriptions, fetchPlans } = subscriptionStore;
 
 const form = ref({
@@ -25,8 +27,10 @@ const form = ref({
   labResponsibleId: ''
 });
 
+/** Determine if we are in edit mode based on the presence of an ID in the route params. */
 const isEdit = computed(() => !!route.params.id);
 
+/** Computed property to check if the user can create a new laboratory based on their subscription plan and current labs. */
 const canCreateLab = computed(() => {
   if (isEdit.value) return true;
   const userLabs = store.userLaboratories.value;
@@ -35,6 +39,11 @@ const canCreateLab = computed(() => {
   return true;
 });
 
+/** Load necessary data on component mount.
+ * - Fetch subscription plans and subscriptions if not already loaded.
+ * - Fetch laboratories if not already loaded.
+ * - If in edit mode, populate the form with existing laboratory data.
+ */
 onMounted(async () => {
   if (!subscriptionStore.plansLoaded.value) {
     await fetchPlans();
@@ -61,6 +70,11 @@ onMounted(async () => {
   }
 });
 
+/** Save laboratory handler.
+ * - Validates if the user can create a new lab or add members based on their subscription limits.
+ * - Constructs a Laboratory object and calls the appropriate store method to add or update it.
+ * - Navigates back to the laboratories list upon success.
+ */
 const saveLaboratory = async () => {
   if (!canCreateLab.value) {
     alert("You have reached the maximum number of laboratories for your current plan. Please upgrade your subscription.");
@@ -102,6 +116,7 @@ const saveLaboratory = async () => {
   }
 };
 
+/** Navigate back to the laboratories list view. */
 const navigateBack = () => {
   router.push({ name: 'laboratoryMngmt-laboratories' });
 }

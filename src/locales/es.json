@@ -239,5 +239,35 @@
     "text-4": "Al cambiar a un plan inferior, los datos existentes se mantienen pero podrás agregar más hasta estar dentro del límite.",
     "text-5": "Los cambios de plan son",
     "text-5-strong": "inmediatos."
+  },
+  "plans": {
+    "free": {
+      "features": [
+        "Hasta 3 miembros por laboratorio",
+        "Hasta 50 items en inventario",
+        "Historial básico",
+        "Soporte por email"
+      ]
+    },
+    "pro": {
+      "features": [
+        "Hasta 10 miembros por laboratorio",
+        "Hasta 200 items en inventario",
+        "Historial completo",
+        "Soporte prioritario",
+        "Reportes avanzados"
+      ]
+    },
+    "max": {
+      "features": [
+        "Miembros ilimitados por laboratorio",
+        "Items ilimitados en inventario",
+        "Historial completo con exportación",
+        "Soporte 24/7",
+        "Reportes avanzados y personalizados",
+        "API access",
+        "Prioridad en nuevas características"
+      ]
+    }
   }
 }

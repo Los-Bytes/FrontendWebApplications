@@ -14,6 +14,7 @@
   const form= ref({userid:'', accessLevel:''});
   const isEdit = computed(()=>!!route.params.id);
 
+  /** Load lab responsible data on component mount. */
   onMounted(()=>{
     if (!labResponsibles.length) fetchLabResponsibles();
     if (isEdit.value){
@@ -24,11 +25,12 @@
       } else router.push({name:'laboratoryMngmt-labResponsibles'});
     }
   });
-
+  /** Retrieve a lab responsible by ID from the store. */
   function getLabResponsibleById(id){
     return store.getLabResponsibleById(id);
   }
 
+  /** Save lab responsible handler. */
   const saveLabResponsible = ()=>{
     const labResponsible = new LabResponsible({
       id: isEdit.value ? route.params.id : null,
@@ -39,6 +41,7 @@
     navigateBack();
   };
 
+  /** Navigate back to the lab responsibles list view. */
   const navigateBack = () => {
     router.push({name: 'laboratoryMngmt-labResponsibles'});
   }

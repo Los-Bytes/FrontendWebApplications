@@ -1,6 +1,10 @@
 const inventoryForm = () => import('./views/inventory-form.vue');
 const inventoryList = () => import('./views/inventory-list.vue');
 
+/**
+ * Routes related to inventory management.
+ * Each route is associated with a specific view component and metadata.
+ */
 const inventoryRoutes = [
   { 
     path: 'laboratory/:labId/inventory', 

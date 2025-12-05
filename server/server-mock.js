@@ -44,7 +44,7 @@ server.post('/api/v1/sign-in', (req, res) => {
     
     console.log('👥 Total users in DB:', users.length);
     
-    const user = users.find(u => u.userName === username);
+    const user = users.find(u => u.username === username);
     
     if (!user) {
         console.log('❌ User not found:', username);
@@ -53,7 +53,7 @@ server.post('/api/v1/sign-in', (req, res) => {
         });
     }
 
-    console.log('✅ User found:', user.userName);
+    console.log('✅ User found:', user.username);
 
     // Verificar password
     if (user.password && user.password !== password) {
@@ -64,14 +64,14 @@ server.post('/api/v1/sign-in', (req, res) => {
     }
 
     // Generar token
-    const token = generateToken(user.id, user.userName);
+    const token = generateToken(user.id, user.username);
 
-    console.log('✅ Sign-in successful for:', user.userName);
+    console.log('✅ Sign-in successful for:', user.username);
 
     // Respuesta exitosa
     return res.status(200).json({
         id: user.id,
-        username: user.userName,
+        username: user.username,
         fullName: user.fullName || '',
         email: user.email || '',
         phone: user.phone || '',
@@ -107,7 +107,7 @@ server.post('/api/v1/sign-up', (req, res) => {
         
         // Verificar si el usuario ya existe
         const existingUser = users.find(u => 
-            u.userName === username || u.email === email
+            u.username === username || u.email === email
         );
         
         if (existingUser) {
@@ -125,7 +125,7 @@ server.post('/api/v1/sign-up', (req, res) => {
         // Crear nuevo usuario
         const newUser = {
             id: newId,
-            userName: username,
+            username: username,
             password: password, // En producción, hashearlo
             fullName: fullName,
             email: email,
@@ -140,7 +140,7 @@ server.post('/api/v1/sign-up', (req, res) => {
         // Agregar usuario a la base de datos
         db.get('users').push(newUser).write();
 
-        console.log('✅ User created successfully:', newUser.userName);
+        console.log('✅ User created successfully:', newUser.username);
 
         // Crear suscripción Free por defecto
         try {
@@ -161,7 +161,7 @@ server.post('/api/v1/sign-up', (req, res) => {
             };
 
             db.get('subscriptions').push(newSubscription).write();
-            console.log('✅ Default subscription created for user:', newUser.userName);
+            console.log('✅ Default subscription created for user:', newUser.username);
         } catch (subError) {
             console.log('⚠️ Could not create subscription:', subError.message);
         }
@@ -170,7 +170,7 @@ server.post('/api/v1/sign-up', (req, res) => {
         return res.status(201).json({
             message: 'User registered successfully',
             id: newUser.id,
-            username: newUser.userName
+            username: newUser.username
         });
 
     } catch (error) {

@@ -13,14 +13,28 @@ const store = useInventoryStore();
 const labStore = useLaboratoryMngmtStore();
 const iamStore = useIamStore();
 
+/**
+ * Computed property for checking if inventory items are loaded
+ * and functions to fetch items and perform actions on them.
+ */
 const { itemsLoaded, fetchItems, markAsSold, markAsUsed, markAsReturned, deleteItem } = store;
 
+/**
+ * Computed property for the current laboratory ID from route params.
+ */
 const laboratoryId = computed(() => parseInt(route.params.labId));
 
+/**
+ * Computed property for the current laboratory based on the ID.
+ */
 const currentLab = computed(() => {
   return labStore.getLaboratoryById(laboratoryId.value);
 });
 
+/**
+ * Computed property for filtering inventory items by the current laboratory ID.
+ * Handles cases where items may be undefined or not an array.
+*/
 const labItems = computed(() => {
   if (!store.items || !Array.isArray(store.items)) {
     return [];
@@ -30,13 +44,20 @@ const labItems = computed(() => {
   return filtered;
 });
 
-// Variables para los diálogos
+/** Reactive reference for the visibility of the "Sell" dialog.*/
 const showSellDialog = ref(false);
+/** Reactive reference for the visibility of the "Use" dialog. */
 const showUseDialog = ref(false);
+/** Reactive reference for the visibility of the "Return" dialog. */
 const showReturnDialog = ref(false);
+/** Reactive reference for the currently selected inventory item. */
 const selectedItem = ref(null);
+/** Reactive reference for the quantity to process in dialogs. */
 const quantityToProcess = ref(0);
 
+/** Loads necessary data including user authentication, laboratory access, and inventory items.
+ * Handles redirection if the user is not signed in or lacks access to the laboratory.
+ */
 async function loadData() {
   if (!iamStore.isSignedIn) {
     alert("Please login first");
@@ -57,32 +78,46 @@ async function loadData() {
   await fetchItems(laboratoryId.value);
 }
 
+/** Lifecycle hook to load data when the component is mounted. */
 onMounted(async () => {
   await loadData();
 });
 
+/** Lifecycle hook to fetch items when the component is activated (e.g., when navigated back to). */
 onActivated(async () => {
   await fetchItems(laboratoryId.value);
 });
 
+/** Opens the "Sell" dialog for the selected item.
+ * @param {Object} item - The inventory item to sell.
+ */
 function openSellDialog(item) {
   selectedItem.value = item;
   quantityToProcess.value = 1;
   showSellDialog.value = true;
 }
 
+/** Opens the "Use" dialog for the selected item.
+ * @param {Object} item - The inventory item to use.
+ */
 function openUseDialog(item) {
   selectedItem.value = item;
   quantityToProcess.value = 1;
   showUseDialog.value = true;
 }
 
+/** Opens the "Return" dialog for the selected item.
+ * @param {Object} item - The inventory item to return.
+ */
 function openReturnDialog(item) {
   selectedItem.value = item;
   quantityToProcess.value = 1;
   showReturnDialog.value = true;
 }
 
+/** Confirms the sale of the selected item with the specified quantity.
+ * Validates the quantity before proceeding.
+ */
 async function confirmSell() {
   if (quantityToProcess.value > selectedItem.value.quantity) {
     alert(`No puedes vender más de ${selectedItem.value.quantity} unidades`);
@@ -99,6 +134,9 @@ async function confirmSell() {
   await fetchItems(laboratoryId.value);
 }
 
+/** Confirms the use of the selected item with the specified quantity.
+ * Validates the quantity before proceeding.
+ */
 async function confirmUse() {
   if (quantityToProcess.value > selectedItem.value.quantity) {
     alert(`No puedes usar más de ${selectedItem.value.quantity} unidades`);
@@ -115,6 +153,9 @@ async function confirmUse() {
   await fetchItems(laboratoryId.value);
 }
 
+/** Confirms the return of the selected item with the specified quantity.
+ * Validates the quantity before proceeding.
+ */
 async function confirmReturn() {
   if (quantityToProcess.value <= 0) {
     alert('La cantidad debe ser mayor a 0');
@@ -126,6 +167,7 @@ async function confirmReturn() {
   await fetchItems(laboratoryId.value);
 }
 
+/** Navigates to the "New Inventory Item" view for the current laboratory. */
 function navigateToNew() {
   router.push({ 
     name: "inventory-new", 
@@ -133,6 +175,7 @@ function navigateToNew() {
   });
 }
 
+/** Navigates to the "Inventory History" view for the current laboratory. */
 function navigateToHistory() {
   router.push({ 
     name: "inventory-history", 
@@ -140,6 +183,7 @@ function navigateToHistory() {
   });
 }
 
+/** Navigates back to the laboratory management view. */
 function navigateBack() {
   router.push({ name: 'laboratoryMngmt-laboratories' });
 }
@@ -177,7 +221,7 @@ function navigateBack() {
       <pv-column field="category" :header="t('inventory.category')" />
       <pv-column field="quantity" :header="t('inventory.quantity')" sortable />
       <pv-column field="status" :header="t('inventory.status')" />
-      <pv-column field="userName" :header="t('inventory.assigned')" sortable />
+      <pv-column field="username" :header="t('inventory.assigned')" sortable />
       <pv-column :header="t('inventory.actions')">
         <template #body="slotProps">
           <pv-button 

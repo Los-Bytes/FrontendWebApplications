@@ -1,6 +1,6 @@
 import {BaseApi} from "../../shared/infrastructure/base-api.js";
 import {BaseEndpoint} from "../../shared/infrastructure/base-endpoint.js";
-
+/** User Profile API for managing user profiles. */
 const usersEndpointPath=import.meta.env.VITE_USERS_ENDPOINT_PATH;
 
 export class UserProfileApi extends BaseApi{

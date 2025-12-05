@@ -1,8 +1,14 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
+/** History API class for managing history resources.*/
 const historyEndpointPath = import.meta.env.VITE_HISTORY_ENDPOINT_PATH;
 
+/**
+ * @class HistoryApi
+ * @summary API class for managing history entries.
+ * Extends the BaseApi to provide CRUD operations for history entries.
+ */
 export class HistoryApi extends BaseApi {
   #historyEndpoint;
 

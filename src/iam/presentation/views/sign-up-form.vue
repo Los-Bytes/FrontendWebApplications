@@ -1,4 +1,3 @@
-
 <script setup>
 import useIamStore from "../../application/iam.service.js";
 import { reactive, ref, computed } from "vue";
@@ -23,6 +22,10 @@ const form = reactive({
   organization: ''
 });
 
+/**
+ * Options for the role selection dropdown.
+ * @returns {Array} Array of role options with labels and values.
+ */
 const roleOptions = computed(() => [
   { label: t('signup.technician'), value: 'technician' },
   { label: t('signup.researcher'), value: 'researcher' },
@@ -50,7 +53,6 @@ async function performSignUp() {
     alert('Password must be at least 6 characters long');
     return;
   }
-
   isLoading.value = true;
 
   try {
@@ -72,6 +74,9 @@ async function performSignUp() {
   }
 }
 
+/**
+ * Navigates to the sign-in page.
+ */
 function navigateToSignIn() {
   router.push({ name: 'iam-sign-in' });
 }

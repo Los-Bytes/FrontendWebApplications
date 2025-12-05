@@ -1,12 +1,13 @@
 /**
  * @class User
- * @summary Represents a user entity in the IAM bounded context.
+ * @summary Represents a user entity in the system.
  */
 export class User {
     /**
      * @param {Object} params - The user parameters.
      * @param {string|number} params.id - The user ID.
      * @param {string} params.username - The username.
+     * @param {string} [params.password] - The password (only for authentication).
      * @param {string} [params.fullName] - The full name.
      * @param {string} [params.email] - The email.
      * @param {string} [params.phone] - The phone number.
@@ -18,7 +19,8 @@ export class User {
      */
     constructor({
         id, 
-        username, 
+        username,
+        password,
         fullName = '', 
         email = '', 
         phone = '', 
@@ -30,6 +32,7 @@ export class User {
     }) {
         this.id = id;
         this.username = username;
+        this.password = password;
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
@@ -41,7 +44,7 @@ export class User {
     }
 
     /**
-     * Check if user has admin privileges
+     * Check if user is a platform administrator
      * @returns {boolean}
      */
     isAdmin() {
@@ -54,5 +57,13 @@ export class User {
      */
     getDisplayName() {
         return this.fullName || this.username;
+    }
+
+    /**
+     * Check if user can manage other users
+     * @returns {boolean}
+     */
+    canManageUsers() {
+        return this.isAdmin();
     }
 }

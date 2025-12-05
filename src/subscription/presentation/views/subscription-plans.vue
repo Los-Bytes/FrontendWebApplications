@@ -5,7 +5,7 @@ import useSubscriptionStore from "../../application/subscription.service.js";
 import useIamStore from "../../../iam/application/iam.service.js";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
+const { t, tm } = useI18n();
 const router = useRouter();
 const subscriptionStore = useSubscriptionStore();
 const iamStore = useIamStore();
@@ -16,11 +16,26 @@ const {
   currentUserSubscription, 
   fetchPlans, 
   fetchSubscriptions, 
-  changePlan 
+  changePlan,
+  initializeDefaultSubscription
 } = subscriptionStore;
-
+/**
+ * State variables to manage loading states for plan changes and initialization.
+ * @type {import('vue').Ref<boolean>}
+ */
 const isChanging = ref(false);
+/**
+ * State variable to indicate if the default subscription is being initialized.
+ * @type {import('vue').Ref<boolean>}
+ */
+const isInitializing = ref(false);
 
+/**
+ * Initial data fetching on component mount.
+ * Checks if the user is signed in, fetches subscription plans and user subscriptions,
+ * and initializes a default Free subscription if none exists.
+ * @returns {Promise<void>}
+ */
 onMounted(async () => {
   if (!iamStore.isSignedIn) {
     alert("Please login first");
@@ -30,12 +45,40 @@ onMounted(async () => {
 
   await fetchPlans();
   await fetchSubscriptions();
+  
+  if (!currentUserSubscription.value) {
+    console.log('⚠️ Usuario sin suscripción activa, inicializando Free...');
+    isInitializing.value = true;
+    try {
+      await initializeDefaultSubscription(iamStore.currentUser.id);
+      console.log('✅ Suscripción Free creada');
+    } catch (error) {
+      console.error('❌ Error al crear suscripción:', error);
+    } finally {
+      isInitializing.value = false;
+    }
+  }
 });
 
+/**
+ * Computed property to get the name of the current user's subscription plan.
+ * @returns {import('vue').ComputedRef<string>}
+ */
 const currentPlanName = computed(() => {
   return currentUserSubscription.value?.planType || 'Free';
 });
 
+/**
+ * Handles the plan change process, including user confirmation and error handling.
+ * @param {string} planName - The name of the plan to change to.
+ * @returns {Promise<void>}
+ * Alerts the user if they are already on the selected plan or if an error occurs during the change.
+ * Confirms with the user before proceeding with the plan change.
+ * Sets loading state during the operation.
+ * Fetches updated subscriptions after a successful plan change.
+ * Logs errors to the console for debugging.
+ * @throws Will throw an error if the plan change fails.
+ */
 async function handleChangePlan(planName) {
   if (planName === currentPlanName.value) {
     alert(`Ya tienes el plan ${planName}`);
@@ -63,7 +106,14 @@ async function handleChangePlan(planName) {
     isChanging.value = false;
   }
 }
-
+/**
+ * Returns the CSS classes for a plan card based on the plan name and whether it is the current plan.
+ * @param {string} planName - The name of the subscription plan.
+ * @returns {string} The CSS classes for the plan card.
+ * Applies specific background and border colors based on the plan name.
+ * Adds a ring effect if the plan is the current plan.
+ * Adds a hover effect for non-current plans.
+ */
 function getPlanCardClass(planName) {
   const baseClass = 'plan-card p-5 rounded-lg shadow-lg transition-all';
   const colorClasses = {
@@ -78,7 +128,13 @@ function getPlanCardClass(planName) {
   
   return `${baseClass} ${colorClasses[planName]} hover:scale-105`;
 }
-
+/**
+ * Returns the severity level for a plan button based on the plan name.
+ * @param {string} planName - The name of the subscription plan.
+ * @returns {string} The severity level for the button.
+ * Maps plan names to severity levels for consistent styling.
+ * Defaults to 'secondary' if the plan name is unrecognized.
+ */
 function getPlanButtonSeverity(planName) {
   const severities = {
     'Free': 'secondary',
@@ -88,9 +144,33 @@ function getPlanButtonSeverity(planName) {
   return severities[planName] || 'secondary';
 }
 
+/**
+ * Navigates to the user's subscription dashboard.
+ * @returns {void}
+ * Uses Vue Router to navigate to the 'my-subscription' route.
+ */
 function navigateToMySubscription() {
   router.push({ name: 'my-subscription' });
 }
+/**
+ * Retrieves translated features for a given plan name.
+ * @param {string} planName - The name of the subscription plan.
+ * @returns {Array<string>} An array of translated feature strings.
+ * Logs a warning if no features are found for the specified plan.
+ * Uses the translation manager to fetch features based on the plan name.
+ */
+function getTranslatedFeatures(planName) {
+  const planKey = planName.toLowerCase();
+  const features = tm(`plans.${planKey}.features`);
+  
+  if (Array.isArray(features)) {
+    return features;
+  }
+  
+  console.warn(`No se encontraron features para el plan: ${planKey}`);
+  return [];
+}
+
 </script>
 
 <template>
@@ -126,6 +206,14 @@ function navigateToMySubscription() {
       </div>
     </div>
 
+    <!-- Mensaje cuando no hay suscripción -->
+    <div v-else-if="iamStore.currentUser && !currentUserSubscription && !isInitializing" 
+         class="mb-6 p-4 bg-yellow-100 rounded-lg border-2 border-yellow-300">
+      <p class="text-lg">
+        ⚠️ No tienes una suscripción activa. Selecciona un plan para comenzar.
+      </p>
+    </div>
+    
     <!-- Loading State -->
     <div v-if="!plansLoaded" class="p-6 bg-gray-100 rounded-lg text-center">
       <i class="pi pi-spin pi-spinner text-4xl text-blue-600"></i>
@@ -196,7 +284,7 @@ function navigateToMySubscription() {
           </p>
           <ul class="space-y-3">
             <li 
-              v-for="(feature, index) in plan.features" 
+              v-for="(feature, index) in getTranslatedFeatures(plan.name)" 
               :key="index" 
               class="flex items-start"
             >

@@ -1,6 +1,9 @@
 import {BaseApi} from "../../shared/infrastructure/base-api.js";
 import {BaseEndpoint} from "../../shared/infrastructure/base-endpoint.js";
 
+/**
+ * LabResponsibleApi class to interact with the Lab Responsible API endpoints.
+ */
 const labResponsibleEndpointPath=import.meta.env.VITE_LABRESPONSIBLES_ENDPOINT_PATH;
 export class LabResponsibleApi extends BaseApi {
     #labResponsibleEndpoint;

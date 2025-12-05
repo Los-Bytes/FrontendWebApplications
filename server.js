@@ -1,7 +1,15 @@
 import jsonServer from 'json-server';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const server = jsonServer.create();
-const router = jsonServer.router('server/db.json');
-const middlewares = jsonServer.defaults();
+const router = jsonServer.router(path.join(__dirname, 'server', 'db.json'));
+const middlewares = jsonServer.defaults({
+    static: path.join(__dirname, 'dist')
+});
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
@@ -15,7 +23,6 @@ server.post('/api/v1/authentication/sign-in', (req, res) => {
     const user = db.get('users').find({ userName: username }).value();
 
     if (user) {
-        // Should check password here in real app, but for mock we just accept it or check if user exists
         console.log(`User found: ${user.userName}`);
         res.jsonp({
             id: user.id,
@@ -31,20 +38,21 @@ server.post('/api/v1/authentication/sign-in', (req, res) => {
 server.post('/api/v1/authentication/sign-up', (req, res) => {
     console.log('Sign up request');
     const { username, password } = req.body;
-
-    // Simple mock signup - just return success
     res.jsonp({
         message: "User created successfully"
     });
 });
 
-// Rewrite rules
-server.use(jsonServer.rewriter({
-    "/api/v1/*": "/$1"
-}));
+// Mount router at /api/v1 to match frontend expectations
+server.use('/api/v1', router);
 
-server.use(router);
+// Catch-all to serve index.html for SPA client-side routing
+// This must be after API routes
+server.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
-server.listen(3000, () => {
-    console.log('JSON Server is running on port 3000 with custom auth middleware');
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+    console.log(`JSON Server is running on port ${port}`);
 });
